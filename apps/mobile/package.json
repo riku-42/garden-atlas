@@ -5,6 +5,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
+    "start:phone": "node scripts/start-cloudflare-tunnel.mjs",
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
