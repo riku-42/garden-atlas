@@ -2,6 +2,7 @@
 import { spawn, spawnSync } from "node:child_process";
 import net from "node:net";
 import path from "node:path";
+import qrcode from "qrcode-terminal";
 import { fileURLToPath } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
 
@@ -29,7 +30,7 @@ function spawnChild(command, args, options = {}) {
   const child = spawn(useCmdShim ? "cmd.exe" : command, useCmdShim ? ["/d", "/s", "/c", command, ...args] : args, {
     cwd: options.cwd ?? mobileRoot,
     env: options.env ?? process.env,
-    stdio: ["inherit", "pipe", "pipe"],
+    stdio: options.stdio ?? ["inherit", "pipe", "pipe"],
     shell: false,
   });
 
@@ -133,10 +134,17 @@ function startExpo(tunnelUrl) {
   ];
 
   log(`[garden-atlas] Cloudflare tunnel ready: ${tunnelUrl}`);
+  const expoGoUrl = `exp://${new URL(tunnelUrl).host}`;
+  log(`[garden-atlas] Expo Go URL: ${expoGoUrl}`);
+  if (!smokeTest) {
+    log("[garden-atlas] Scan this QR code with Expo Go:");
+    qrcode.generate(expoGoUrl, { small: true }, (qr) => log(qr));
+  }
   log("[garden-atlas] Starting Expo with EXPO_PACKAGER_PROXY_URL so the QR code uses the public tunnel.");
 
   const expo = spawnChild(expoCommand, expoArgs, {
     cwd: mobileRoot,
+    stdio: smokeTest ? undefined : "inherit",
     env: {
       ...process.env,
       CI: smokeTest ? "1" : process.env.CI,
@@ -145,8 +153,12 @@ function startExpo(tunnelUrl) {
     },
   });
 
-  pipeWithPrefix(expo.stdout, "[expo] ");
-  pipeWithPrefix(expo.stderr, "[expo] ");
+  if (expo.stdout) {
+    pipeWithPrefix(expo.stdout, "[expo] ");
+  }
+  if (expo.stderr) {
+    pipeWithPrefix(expo.stderr, "[expo] ");
+  }
 
   expo.once("exit", (code) => {
     if (!shuttingDown) {
