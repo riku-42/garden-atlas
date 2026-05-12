@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Garden Atlas Screen Storyboard</title>
+    <style>
+      :root {
+        --ink: #20351f;
+        --muted: #697463;
+        --paper: #fbf7ed;
+        --ivory: #fffdf6;
+        --moss: #557a3d;
+        --forest: #172916;
+        --line: #e2dac7;
+        --gold: #b5964f;
+        --rose: #bd7d8e;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #ece5d8;
+        color: var(--ink);
+        font-family: "Aptos", "Segoe UI", sans-serif;
+      }
+      main {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 42px 22px 72px;
+      }
+      .intro {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+        gap: 22px;
+        align-items: end;
+        margin-bottom: 28px;
+      }
+      h1, h2, h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(42px, 8vw, 92px);
+        line-height: .92;
+      }
+      h2 { font-size: 26px; }
+      h3 { font-size: 19px; }
+      p { margin: 10px 0 0; color: var(--muted); line-height: 1.55; }
+      .eyebrow {
+        color: var(--gold);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .14em;
+        font-weight: 800;
+        margin-bottom: 12px;
+      }
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+        gap: 22px;
+      }
+      .screen-card {
+        background: var(--ivory);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        box-shadow: 0 20px 54px rgba(49, 61, 42, .12);
+      }
+      .caption {
+        padding: 14px 4px 2px;
+      }
+      .caption strong { display: block; }
+      .phone {
+        width: 100%;
+        max-width: 330px;
+        min-height: 620px;
+        margin: 0 auto;
+        border-radius: 34px;
+        background: #111;
+        padding: 10px;
+      }
+      .screen {
+        min-height: 600px;
+        border-radius: 27px;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(180deg, #fffaf0, #f0e7d8);
+      }
+      .screen.light { padding: 20px; }
+      .screen.dark {
+        background:
+          linear-gradient(180deg, rgba(8, 18, 8, .18), rgba(7, 12, 6, .82)),
+          radial-gradient(circle at 48% 38%, #f7f3df 0 9%, #d6d8a7 10% 14%, #547542 15% 27%, transparent 28%),
+          linear-gradient(140deg, #122112, #36552d 52%, #101c10);
+        color: #fffaf0;
+      }
+      .status {
+        height: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 6px;
+      }
+      .icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 253, 246, .78);
+        border: 1px solid rgba(226, 218, 199, .75);
+        color: var(--ink);
+        font-weight: 800;
+      }
+      .icon.dark-icon {
+        background: rgba(10, 18, 10, .45);
+        border-color: rgba(255, 250, 240, .24);
+        color: #fffaf0;
+      }
+      .button {
+        min-height: 48px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--ivory);
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 800;
+      }
+      .button.primary {
+        background: var(--moss);
+        border-color: var(--moss);
+        color: #fffaf0;
+      }
+      .pill-row { display: flex; gap: 8px; overflow: hidden; margin: 16px 0; }
+      .pill {
+        white-space: nowrap;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 253, 246, .82);
+        padding: 8px 12px;
+        color: var(--ink);
+        font-size: 13px;
+      }
+      .pill.active {
+        background: #e8f0dc;
+        border-color: #bfd2ad;
+      }
+      .plant-photo {
+        border-radius: 18px;
+        background:
+          radial-gradient(circle at 51% 43%, #fff 0 11%, #efe7bb 12% 16%, #6e8c51 17% 28%, transparent 29%),
+          radial-gradient(circle at 27% 60%, #496e3b 0 20%, transparent 21%),
+          radial-gradient(circle at 74% 63%, #263f28 0 24%, transparent 25%),
+          linear-gradient(140deg, #152714, #365b2f);
+      }
+      .plant-photo.pink {
+        background:
+          radial-gradient(circle at 50% 45%, #f6c0d5 0 15%, #ad7896 16% 25%, transparent 26%),
+          linear-gradient(140deg, #244126, #6f8a50);
+      }
+      .plant-photo.yellow {
+        background:
+          radial-gradient(circle at 50% 42%, #f4d96a 0 13%, #d59d43 14% 23%, transparent 24%),
+          linear-gradient(140deg, #263f23, #768949);
+      }
+      .nav {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 14px;
+        height: 64px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: rgba(255, 253, 246, .9);
+        display: grid;
+        grid-template-columns: 1fr 66px 1fr;
+        align-items: center;
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+        box-shadow: 0 16px 36px rgba(54, 63, 46, .12);
+      }
+      .nav .capture {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto;
+        border-radius: 999px;
+        background: var(--moss);
+        color: #fffaf0;
+        display: grid;
+        place-items: center;
+        font-size: 24px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .tile {
+        min-height: 138px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: var(--ivory);
+        border: 1px solid var(--line);
+      }
+      .tile .plant-photo { height: 82px; border-radius: 0; }
+      .tile-text { padding: 8px; font-size: 12px; }
+      .meta-card {
+        background: rgba(255, 253, 246, .88);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+      }
+      .atlas-card {
+        background: #fffaf0;
+        border: 1px solid #ded4bf;
+        border-radius: 8px;
+        padding: 16px;
+        min-height: 380px;
+      }
+      .line-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .line-drawing {
+        height: 44px;
+        border-bottom: 2px solid #a49a83;
+        border-radius: 50%;
+        opacity: .7;
+      }
+      .map {
+        height: 330px;
+        border-radius: 18px;
+        background:
+          linear-gradient(28deg, transparent 0 43%, rgba(96, 142, 198, .45) 44% 52%, transparent 53%),
+          linear-gradient(142deg, rgba(178, 206, 166, .75) 0 18%, transparent 19%),
+          repeating-linear-gradient(32deg, #f6f2e9 0 12px, #e2ddcf 13px 15px);
+        border: 1px solid var(--line);
+        position: relative;
+      }
+      .pin {
+        position: absolute;
+        left: 52%;
+        top: 47%;
+        width: 40px;
+        height: 40px;
+        border-radius: 999px 999px 999px 4px;
+        background: var(--moss);
+        transform: rotate(-45deg);
+      }
+      .pin::after {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border-radius: 999px;
+        background: #fffaf0;
+      }
+      .progress-ring {
+        width: 154px;
+        height: 154px;
+        border-radius: 999px;
+        margin: 82px auto 28px;
+        border: 14px solid rgba(255, 250, 240, .2);
+        border-top-color: #fffaf0;
+        display: grid;
+        place-items: center;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 34px;
+      }
+      .share-format {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .format {
+        min-height: 78px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        display: grid;
+        place-items: center;
+        text-align: center;
+        font-size: 12px;
+      }
+      @media (max-width: 760px) {
+        main { padding: 24px 12px 44px; }
+        .intro { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="intro">
+        <div>
+          <div class="eyebrow">HTML storyboard · Prototype-first MVP</div>
+          <h1>其他页面<br />Screen Flow</h1>
+        </div>
+        <p>These screens extend the approved Home direction: one-card-at-a-time `封面植物` discovery, private-by-default recommendations, and a calm botanical archive workflow.</p>
+      </div>
+
+      <div class="flow">
+        <article class="screen-card">
+          <div class="phone">
+            <div class="screen dark">
+              <div style="padding:20px">
+                <div class="status"><span>9:41</span><span>●●●</span></div>
+                <div class="topbar"><div class="icon dark-icon">×</div><div class="icon dark-icon">⚡</div></div>
+              </div>
+              <div style="position:absolute;inset:96px 28px 156px;border:1px solid rgba(255,255,255,.22);border-radius:22px"></div>
+              <div style="position:absolute;left:0;right:0;bottom:0;padding:22px;background:linear-gradient(180deg,transparent,rgba(4,8,4,.82))">
+                <div style="display:grid;grid-template-columns:1fr 88px 1fr;align-items:center;gap:10px">
+                  <div style="text-align:center"><div class="icon dark-icon" style="margin:auto">□</div><p style="color:#fffaf0;font-size:12px">相册</p></div>
+                  <div style="width:76px;height:76px;border-radius:999px;border:5px solid #fffaf0;margin:auto"></div>
+                  <div style="text-align:center"><div class="icon dark-icon" style="margin:auto">◎</div><p style="color:#fffaf0;font-size:12px">识别历史</p></div>
+                </div>
+                <div style="display:flex;justify-content:center;gap:28px;margin-top:18px;color:#d9e9c4"><strong>拍照</strong><span>从相册选择</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="caption"><strong>Capture</strong><p>Full-screen plant capture. Camera and album are equal paths, with the interface kept quiet and direct.</p></div>
+        </article>
+
+        <article class="screen-card">
+          <div class="phone">
+            <div class="screen light" style="background:linear-gradient(180deg,#23351f,#101b0f);color:#fffaf0">
+              <div class="status"><span>9:41</span><span>●●●</span></div>
+              <div class="progress-ring">64%</div>
+              <h2 style="text-align:center">正在生成植物图鉴</h2>
+              <p style="text-align:center;color:#dbe5cf">这通常需要几秒钟</p>
+              <div style="display:grid;gap:10px;margin-top:34px">
+                <div class="meta-card">正在整理植物轮廓</div>
+                <div class="meta-card">生成标本构图</div>
+                <div class="meta-card">绘制细节特写</div>
+                <div class="meta-card">写入图鉴标签</div>
+              </div>
+            </div>
+          </div>
+          <div class="caption"><strong>Generating</strong><p>Progress is framed as specimen preparation, not a technical loading queue.</p></div>
+        </article>
+
+        <article class="screen-card">
+          <div class="phone">
+            <div class="screen light">
+              <div class="status"><span>9:41</span><span>●●●</span></div>
+              <div class="topbar"><div class="icon">‹</div><h3>图鉴</h3><div class="icon">↓</div></div>
+              <div class="atlas-card" style="margin-top:18px">
+                <h2>山茶</h2>
+                <p style="margin-top:0">Camellia japonica · 山茶科</p>
+                <div class="plant-photo" style="height:190px;margin:14px 0"></div>
+                <div class="pill-row" style="margin:0"><span class="pill">花期 12月-4月</span><span class="pill">中国 · 日本</span></div>
+                <div class="line-row"><div class="line-drawing"></div><div class="line-drawing"></div><div class="line-drawing"></div><div class="line-drawing"></div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px"><div class="button">对比原图</div><div class="button primary">保存图鉴</div></div>
+            </div>
+          </div>
+          <div class="caption"><strong>Result</strong><p>The generated atlas card is the reward moment, with save and comparison as the first actions.</p></div>
+        </article>
+
+        <article class="screen-card">
+          <div class="phone">
+            <div class="screen light">
+              <div class="status"><span>9:41</span><span>●●●</span></div>
+              <div class="topbar"><div></div><h3>图鉴全览</h3><div class="icon">⌕</div></div>
+              <div class="pill-row"><span class="pill active">全部</span><span class="pill">已识别</span><span class="pill">未识别</span><span class="pill">收藏</span></div>
+              <div class="grid">
+                <div class="tile"><div class="plant-photo"></div><div class="tile-text"><strong>山茶</strong><br />Camellia japonica</div></div>
+                <div class="tile"><div class="plant-photo pink"></div><div class="tile-text"><strong>绣球花</strong><br />Hydrangea</div></div>
+                <div class="tile"><div class="plant-photo yellow"></div><div class="tile-text"><strong>月季</strong><br />Rosa chinensis</div></div>
+                <div class="tile"><div class="plant-photo" style="filter:saturate(.7)"></div><div class="tile-text"><strong>蕨类</strong><br />Unidentified</div></div>
+              </div>
+              <div class="nav"><span>首页</span><span class="capture">⌘</span><span>设置</span></div>
+            </div>
+          </div>
+          <div class="caption"><strong>Gallery</strong><p>The collection stays dense enough for browsing while preserving the paper-card feeling.</p></div>
+        </article>
+
+        <article class="screen-card">
+          <div class="phone">
+            <div class="screen light">
+              <div class="status"><span>9:41</span><span>●●●</span></div>
+              <div class="topbar"><div class="icon">‹</div><h3>详情</h3><div class="icon">⋯</div></div>
+              <div class="meta-card" style="display:flex;gap:12px;align-items:center;margin-top:18px">
+                <div class="plant-photo" style="width:72px;height:72px"></div>
+                <div><h3>山茶</h3><p style="margin-top:0">Camellia japonica</p></div>
+              </div>
+              <div class="meta-card" style="margin-top:16px">
+                <strong>记录信息</strong>
+                <p>拍摄时间 · 2026年5月20日 10:30</p>
+                <p>拍摄地点 · 杭州西湖</p>
+                <p>备注 · 雨后的一株山茶，花开洁白，香气淡雅。</p>
+                <div class="pill-row"><span class="pill">庭院植物</span><span class="pill">开花植物</span></div>
+              </div>
+              <div class="plant-photo" style="height:156px;margin-top:16px"></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px"><div class="button">分享</div><div class="button primary">编辑</div></div>
+            </div>
+          </div>
+          <div class="caption"><strong>Entry Detail</strong><p>Memory metadata, notes, tags, original photo, and edits live here.</p></div>
+        </article>
+
+        <article class="screen-card">
+          <div class="phone">
+            <div class="screen light">
+              <div class="status"><span>9:41</span><span>●●●</span></div>
+              <div class="topbar"><div class="icon">‹</div><h3>选择位置</h3><div></div></div>
+              <div class="pill" style="margin:18px 0;width:100%;color:#9a9385">⌕ 搜索地点</div>
+              <div class="map"><div class="pin"></div></div>
+              <div class="meta-card" style="margin-top:16px">
+                <strong>已选择位置</strong>
+                <p>浙江省杭州市西湖区满觉陇路</p>
+                <p>纬度 30.2475 / 经度 120.1215</p>
+              </div>
+              <div class="button primary" style="margin-top:12px">确认</div>
+            </div>
+          </div>
+          <div class="caption"><strong>Location</strong><p>Location is part of memory keeping, with broad labels available for public recommendations.</p></div>
+        </article>
+
+        <article class="screen-card">
+          <div class="phone">
+            <div class="screen light">
+              <div class="status"><span>9:41</span><span>●●●</span></div>
+              <div class="topbar"><div class="icon">‹</div><h3>推荐设置</h3><div></div></div>
+              <div class="meta-card" style="margin-top:22px">
+                <h3>开放我的图鉴推荐给他人</h3>
+                <p>开启后，你选择公开的植物卡片可能出现在他人的封面植物中。</p>
+                <div style="margin-top:18px;height:34px;width:62px;border-radius:999px;background:var(--moss);margin-left:auto;position:relative"><span style="position:absolute;right:4px;top:4px;width:26px;height:26px;background:#fff;border-radius:50%"></span></div>
+              </div>
+              <div class="meta-card" style="margin-top:14px">
+                <strong>默认保持私密</strong>
+                <p>每张图鉴保存后默认为私密。你可以单独选择设为可推荐。</p>
+              </div>
+              <div class="meta-card" style="margin-top:14px">
+                <strong>公开信息</strong>
+                <p>生成图、植物名称、大致地点、标签和展示名。</p>
+              </div>
+            </div>
+          </div>
+          <div class="caption"><strong>Recommendation Privacy</strong><p>Discovery is opt-in. Private GPS, original metadata, and detailed notes stay closed by default.</p></div>
+        </article>
+
+        <article class="screen-card">
+          <div class="phone">
+            <div class="screen light">
+              <div class="status"><span>9:41</span><span>●●●</span></div>
+              <div class="topbar"><div class="icon">‹</div><h3>分享图鉴</h3><div></div></div>
+              <div class="atlas-card" style="min-height:310px;margin-top:18px">
+                <h2>山茶</h2>
+                <p style="margin-top:0">Camellia japonica</p>
+                <div class="plant-photo" style="height:170px;margin-top:16px"></div>
+              </div>
+              <h3 style="margin-top:18px">导出格式</h3>
+              <div class="share-format" style="margin-top:12px">
+                <div class="format">方形<br />社交卡</div>
+                <div class="format">故事<br />9:16</div>
+                <div class="format">海报<br />打印</div>
+              </div>
+              <div class="button primary" style="margin-top:16px">保存海报</div>
+            </div>
+          </div>
+          <div class="caption"><strong>Share / Export</strong><p>Sharing focuses on beautiful outputs, not a social feed in the MVP.</p></div>
+        </article>
+      </div>
+    </main>
+  </body>
+</html>

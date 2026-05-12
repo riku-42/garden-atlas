@@ -119,6 +119,8 @@ The interface should be refined, quiet, and tactile:
 
 ## Key Screens
 
+The HTML storyboard at `docs/html/garden-atlas-screen-storyboard.html` visualizes the non-home screens: Capture, Generating, Result, Gallery, Detail, Location, Recommendation Privacy, and Share/Export.
+
 ### Home
 
 Purpose: invite capture and reinforce the emotional promise.

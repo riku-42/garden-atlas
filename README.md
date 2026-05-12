@@ -6,4 +6,5 @@ Current approved direction: Prototype-first MVP.
 
 - `docs/superpowers/specs/2026-05-12-garden-atlas-design.md` contains the formal product and design spec.
 - `docs/html/garden-atlas-spec.html` is the browser-readable planning version.
+- `docs/html/garden-atlas-screen-storyboard.html` shows the rest of the app screens in HTML.
 - Planned implementation: Vite mobile web prototype plus React Native Expo scaffold.
