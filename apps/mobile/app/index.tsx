@@ -3,9 +3,13 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { uiCopy } from "@garden-atlas/shared";
 import { RecommendationDeck } from "../src/components/RecommendationDeck";
 import { Screen } from "../src/components/Screen";
+import { usePrototypeStore } from "../src/domain/PrototypeStore";
 import { colors, styles } from "../src/styles";
 
 export default function Home() {
+  const { entries } = usePrototypeStore();
+  const favoritesCount = entries.filter((entry) => entry.favorite).length;
+
   return (
     <Screen>
       <View style={homeStyles.header}>
@@ -33,13 +37,13 @@ export default function Home() {
         <Link href="/gallery" asChild>
           <Pressable style={homeStyles.squareCard}>
             <Text style={styles.cardTitle}>{uiCopy.home.gallery}</Text>
-            <Text style={styles.smallText}>查看所有图鉴</Text>
+            <Text style={styles.smallText}>查看 {entries.length} 张图鉴</Text>
           </Pressable>
         </Link>
         <Link href="/gallery" asChild>
           <Pressable style={homeStyles.squareCard}>
             <Text style={styles.cardTitle}>{uiCopy.home.favorites}</Text>
-            <Text style={styles.smallText}>收藏的植物</Text>
+            <Text style={styles.smallText}>{favoritesCount} 株已收藏</Text>
           </Pressable>
         </Link>
       </View>

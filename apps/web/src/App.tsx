@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { mockEntries, type PlantEntry } from "@garden-atlas/shared";
+import type { EntryVisibility, PlantEntry, RecommendationInteraction } from "@garden-atlas/shared";
 import { CaptureScreen } from "./screens/CaptureScreen";
 import { EntryDetailScreen } from "./screens/EntryDetailScreen";
 import { GalleryScreen } from "./screens/GalleryScreen";
@@ -9,6 +9,7 @@ import { LocationScreen } from "./screens/LocationScreen";
 import { RecommendationSettingsScreen } from "./screens/RecommendationSettingsScreen";
 import { ResultScreen } from "./screens/ResultScreen";
 import { ShareExportScreen } from "./screens/ShareExportScreen";
+import { usePrototypeStore } from "./domain/usePrototypeStore";
 
 export type ScreenName =
   | "home"
@@ -22,8 +23,9 @@ export type ScreenName =
   | "share";
 
 export function App() {
+  const prototype = usePrototypeStore();
   const [screen, setScreen] = useState<ScreenName>("home");
-  const [selectedEntry, setSelectedEntry] = useState<PlantEntry>(mockEntries[0]);
+  const [selectedEntry, setSelectedEntry] = useState<PlantEntry>(prototype.entries[0]);
 
   function openEntry(entry: PlantEntry) {
     setSelectedEntry(entry);
@@ -33,14 +35,38 @@ export function App() {
   return (
     <main className="app-shell">
       <section className="phone-frame" aria-label="Garden Atlas prototype">
-        {screen === "home" && <HomeScreen onNavigate={setScreen} onOpenEntry={openEntry} />}
+        {screen === "home" && (
+          <HomeScreen
+            entries={prototype.entries}
+            interactionsCount={prototype.interactions.length}
+            onNavigate={setScreen}
+            onOpenEntry={openEntry}
+            onRecommendationAction={(entryId: string, action: RecommendationInteraction["action"]) =>
+              prototype.recordInteraction(entryId, action)
+            }
+            recommendationQueue={prototype.recommendationQueue}
+          />
+        )}
         {screen === "capture" && <CaptureScreen onNavigate={setScreen} />}
         {screen === "generating" && <GeneratingScreen onNavigate={setScreen} />}
         {screen === "result" && <ResultScreen entry={selectedEntry} onNavigate={setScreen} />}
-        {screen === "gallery" && <GalleryScreen onNavigate={setScreen} onOpenEntry={openEntry} />}
+        {screen === "gallery" && (
+          <GalleryScreen entries={prototype.entries} onNavigate={setScreen} onOpenEntry={openEntry} />
+        )}
         {screen === "detail" && <EntryDetailScreen entry={selectedEntry} onNavigate={setScreen} />}
         {screen === "location" && <LocationScreen onNavigate={setScreen} />}
-        {screen === "settings" && <RecommendationSettingsScreen onNavigate={setScreen} />}
+        {screen === "settings" && (
+          <RecommendationSettingsScreen
+            entries={prototype.entries}
+            onNavigate={setScreen}
+            onReset={prototype.reset}
+            onSetSharing={prototype.setSharing}
+            onSetVisibility={(entryId: string, visibility: EntryVisibility) =>
+              prototype.updateVisibility(entryId, visibility)
+            }
+            settings={prototype.settings}
+          />
+        )}
         {screen === "share" && <ShareExportScreen entry={selectedEntry} onNavigate={setScreen} />}
       </section>
     </main>

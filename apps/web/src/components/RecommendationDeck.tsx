@@ -1,24 +1,42 @@
 import { useMemo, useState } from "react";
-import { getRecommendableEntries, uiCopy, type PlantEntry } from "@garden-atlas/shared";
+import { uiCopy, type PlantEntry, type RecommendationInteraction } from "@garden-atlas/shared";
 import { Heart, X } from "lucide-react";
 import { PlantVisual } from "./PlantVisual";
 
 type RecommendationDeckProps = {
+  entries: PlantEntry[];
+  interactionsCount: number;
+  onInteract: (entryId: string, action: RecommendationInteraction["action"]) => void;
   onOpenEntry: (entry: PlantEntry) => void;
 };
 
-export function RecommendationDeck({ onOpenEntry }: RecommendationDeckProps) {
-  const entries = useMemo(() => getRecommendableEntries(), []);
+export function RecommendationDeck({ entries, interactionsCount, onInteract, onOpenEntry }: RecommendationDeckProps) {
+  const safeEntries = useMemo(() => (entries.length > 0 ? entries : []), [entries]);
   const [index, setIndex] = useState(0);
   const [gesture, setGesture] = useState<"left" | "right" | null>(null);
-  const current = entries[index % entries.length];
+  const current = safeEntries[index % safeEntries.length];
 
-  function advance(nextGesture: "left" | "right") {
+  function advance(nextGesture: "left" | "right", action: RecommendationInteraction["action"]) {
+    if (!current) {
+      return;
+    }
     setGesture(nextGesture);
     window.setTimeout(() => {
+      onInteract(current.id, action);
       setIndex((value) => value + 1);
       setGesture(null);
     }, 160);
+  }
+
+  if (!current) {
+    return (
+      <section className="recommendation" aria-label="封面植物推荐">
+        <div className="paper-panel">
+          <strong>暂无公开植物</strong>
+          <p>开启图鉴推荐后，这里会出现他人的植物卡片。</p>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -28,7 +46,7 @@ export function RecommendationDeck({ onOpenEntry }: RecommendationDeckProps) {
           <h2>{uiCopy.home.coverTitle}</h2>
           <p>{uiCopy.home.coverHint}</p>
         </div>
-        <span>∞</span>
+        <span>{interactionsCount} 次滑动</span>
       </div>
       <button
         className={`plant-deck-card ${gesture === "left" ? "swiping-left" : ""} ${
@@ -49,11 +67,11 @@ export function RecommendationDeck({ onOpenEntry }: RecommendationDeckProps) {
         </span>
       </button>
       <div className="deck-actions">
-        <button type="button" className="round-action" onClick={() => advance("left")} aria-label="不喜欢">
+        <button type="button" className="round-action" onClick={() => advance("left", "pass")} aria-label="不喜欢">
           <X size={22} />
           {uiCopy.recommendation.pass}
         </button>
-        <button type="button" className="round-action like" onClick={() => advance("right")} aria-label="喜欢">
+        <button type="button" className="round-action like" onClick={() => advance("right", "like")} aria-label="喜欢">
           <Heart size={22} />
           {uiCopy.recommendation.like}
         </button>

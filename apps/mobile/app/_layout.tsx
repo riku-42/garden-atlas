@@ -1,5 +1,10 @@
 import { Stack } from "expo-router";
+import { PrototypeProvider } from "../src/domain/PrototypeStore";
 
 export default function Layout() {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <PrototypeProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </PrototypeProvider>
+  );
 }

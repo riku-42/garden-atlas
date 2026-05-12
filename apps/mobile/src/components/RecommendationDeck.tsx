@@ -1,22 +1,30 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
-import { getRecommendableEntries, uiCopy } from "@garden-atlas/shared";
+import { uiCopy } from "@garden-atlas/shared";
+import type { RecommendationInteraction } from "@garden-atlas/shared";
+import { usePrototypeStore } from "../domain/PrototypeStore";
 import { colors, styles } from "../styles";
 import { PlantVisual } from "./PlantVisual";
 
 export function RecommendationDeck() {
-  const entries = useMemo(() => getRecommendableEntries(), []);
+  const { interactions, recommendationQueue, recordInteraction } = usePrototypeStore();
   const [index, setIndex] = useState(0);
   const position = useRef(new Animated.ValueXY()).current;
-  const current = entries[index % entries.length];
+  const current = recommendationQueue[index % recommendationQueue.length];
 
-  function advance(direction: "left" | "right") {
+  function advance(direction: "left" | "right", action: RecommendationInteraction["action"]) {
+    if (!current) {
+      return;
+    }
+
+    const entryId = current.id;
     const toValue = direction === "right" ? 460 : -460;
     Animated.timing(position, {
       toValue: { x: toValue, y: 0 },
       duration: 160,
       useNativeDriver: false
     }).start(() => {
+      recordInteraction(entryId, action);
       position.setValue({ x: 0, y: 0 });
       setIndex((value) => value + 1);
     });
@@ -30,9 +38,9 @@ export function RecommendationDeck() {
       }),
       onPanResponderRelease: (_, gesture) => {
         if (gesture.dx > 90) {
-          advance("right");
+          advance("right", "like");
         } else if (gesture.dx < -90) {
-          advance("left");
+          advance("left", "pass");
         } else {
           Animated.spring(position, {
             toValue: { x: 0, y: 0 },
@@ -48,6 +56,23 @@ export function RecommendationDeck() {
     outputRange: ["-5deg", "0deg", "5deg"]
   });
 
+  if (!current) {
+    return (
+      <View style={deckStyles.wrap}>
+        <View style={styles.row}>
+          <View>
+            <Text style={deckStyles.title}>{uiCopy.home.coverTitle}</Text>
+            <Text style={styles.smallText}>{uiCopy.home.coverHint}</Text>
+          </View>
+          <Text style={deckStyles.infinity}>{interactions.length} 次</Text>
+        </View>
+        <View style={deckStyles.emptyCard}>
+          <Text style={deckStyles.emptyText}>暂无可推荐植物</Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={deckStyles.wrap}>
       <View style={styles.row}>
@@ -55,7 +80,7 @@ export function RecommendationDeck() {
           <Text style={deckStyles.title}>{uiCopy.home.coverTitle}</Text>
           <Text style={styles.smallText}>{uiCopy.home.coverHint}</Text>
         </View>
-        <Text style={deckStyles.infinity}>∞</Text>
+        <Text style={deckStyles.infinity}>{interactions.length} 次</Text>
       </View>
       <Animated.View
         {...panResponder.panHandlers}
@@ -69,10 +94,10 @@ export function RecommendationDeck() {
         </View>
       </Animated.View>
       <View style={deckStyles.actions}>
-        <Pressable style={deckStyles.passButton} onPress={() => advance("left")}>
+        <Pressable style={deckStyles.passButton} onPress={() => advance("left", "pass")}>
           <Text style={deckStyles.passText}>{uiCopy.recommendation.pass}</Text>
         </Pressable>
-        <Pressable style={deckStyles.likeButton} onPress={() => advance("right")}>
+        <Pressable style={deckStyles.likeButton} onPress={() => advance("right", "like")}>
           <Text style={deckStyles.likeText}>{uiCopy.recommendation.like}</Text>
         </Pressable>
       </View>
@@ -105,6 +130,20 @@ const deckStyles = StyleSheet.create({
     shadowRadius: 22,
     shadowOffset: { width: 0, height: 14 },
     elevation: 4
+  },
+  emptyCard: {
+    height: 240,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.ivory,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 12
+  },
+  emptyText: {
+    color: colors.muted,
+    fontWeight: "800"
   },
   copy: {
     position: "absolute",

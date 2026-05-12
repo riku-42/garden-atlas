@@ -578,11 +578,12 @@ p {
   width: 66px;
   height: 36px;
   border-radius: 999px;
-  background: var(--color-moss);
+  border: 0;
+  background: #c8c0af;
   margin-left: auto;
   padding: 4px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .toggle span {
@@ -590,6 +591,34 @@ p {
   height: 28px;
   border-radius: 999px;
   background: #fff;
+}
+
+.toggle.toggle-on {
+  background: var(--color-moss);
+  justify-content: flex-end;
+}
+
+.settings-entry-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.settings-entry-row {
+  width: 100%;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background: var(--color-paper);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  color: var(--color-ink);
+  text-align: left;
+}
+
+.settings-entry-row small {
+  color: var(--color-muted);
 }
 
 .share-format {
