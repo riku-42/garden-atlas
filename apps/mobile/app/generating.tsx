@@ -1,15 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { uiCopy } from "@garden-atlas/shared";
 import { Screen } from "../src/components/Screen";
+import { usePrototypeStore } from "../src/domain/PrototypeStore";
 import { colors, styles } from "../src/styles";
 
 export default function Generating() {
+  const { addGeneratedEntry } = usePrototypeStore();
+  const hasStarted = useRef(false);
+
   useEffect(() => {
-    const id = setTimeout(() => router.replace("/result"), 1800);
-    return () => clearTimeout(id);
-  }, []);
+    if (hasStarted.current) {
+      return;
+    }
+    hasStarted.current = true;
+
+    const timerId = setTimeout(() => {
+      const entryId = addGeneratedEntry({
+        locationName: "新采集地点",
+        notes: "刚刚生成的一张植物图鉴。",
+        styleMode: "scientific_herbarium"
+      });
+      router.replace({ pathname: "/result", params: { id: entryId } });
+    }, 1800);
+    return () => clearTimeout(timerId);
+  }, [addGeneratedEntry]);
 
   return (
     <Screen dark>

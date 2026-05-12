@@ -56,9 +56,9 @@ export function AtlasCard({ entry }: { entry: PlantEntry }) {
   );
 }
 
-export function GalleryTile({ entry }: { entry: PlantEntry }) {
+export function GalleryTile({ entry, href = "/detail" }: { entry: PlantEntry; href?: Href }) {
   return (
-    <Link href="/detail" asChild>
+    <Link href={href} asChild>
       <Pressable style={uiStyles.galleryTile}>
         <PlantVisual variant={entry.id} height={104} />
         <View style={uiStyles.galleryCopy}>

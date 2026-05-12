@@ -1,12 +1,15 @@
 import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
 import {
+  addCapturedEntry,
   createPrototypeState,
+  getPlantEntry,
   getRecommendationQueue,
   recordRecommendationInteraction,
   setEntryVisibility,
   toggleRecommendationSharing
 } from "@garden-atlas/shared";
 import type {
+  AddCapturedEntryInput,
   EntryVisibility,
   PlantEntry,
   PrototypeState,
@@ -19,6 +22,8 @@ type PrototypeContextValue = {
   interactions: RecommendationInteraction[];
   recommendationQueue: PlantEntry[];
   settings: UserRecommendationSettings;
+  addGeneratedEntry: (input?: AddCapturedEntryInput) => string;
+  getEntry: (entryId: string | undefined) => PlantEntry | undefined;
   recordInteraction: (entryId: string, action: RecommendationInteraction["action"]) => void;
   reset: () => void;
   setSharing: (enabled: boolean) => void;
@@ -36,6 +41,17 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
       interactions: state.interactions,
       recommendationQueue: getRecommendationQueue(state),
       settings: state.settings,
+      addGeneratedEntry: (input = {}) => {
+        const result = addCapturedEntry(state, {
+          capturedAt: new Date().toISOString(),
+          now: new Date().toISOString(),
+          sourceEntryId: "entry_camellia",
+          ...input
+        });
+        setState(result.state);
+        return result.entryId;
+      },
+      getEntry: (entryId) => (entryId ? getPlantEntry(state, entryId) : undefined),
       recordInteraction: (entryId, action) => {
         setState((current) => recordRecommendationInteraction(current, entryId, action));
       },

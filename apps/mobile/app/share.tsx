@@ -1,15 +1,19 @@
 import { StyleSheet, Text, View } from "react-native";
-import { mockEntries } from "@garden-atlas/shared";
+import { useLocalSearchParams } from "expo-router";
 import { ActionLink, AtlasCard, TopBar } from "../src/components/GardenUI";
 import { Screen } from "../src/components/Screen";
+import { usePrototypeStore } from "../src/domain/PrototypeStore";
 import { colors, styles } from "../src/styles";
 
 export default function Share() {
-  const entry = mockEntries[0];
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { entries, getEntry } = usePrototypeStore();
+  const entry = getEntry(id) ?? entries[0];
+  const detailHref = { pathname: "/detail", params: { id: entry.id } } as const;
 
   return (
     <Screen>
-      <TopBar title="分享图鉴" backHref="/detail" />
+      <TopBar title="分享图鉴" backHref={detailHref} />
       <AtlasCard entry={entry} />
       <Text style={[styles.cardTitle, { marginTop: 18 }]}>导出格式</Text>
       <View style={shareStyles.formats}>
@@ -17,7 +21,7 @@ export default function Share() {
         <View style={shareStyles.format}><Text style={shareStyles.formatText}>故事{"\n"}9:16</Text></View>
         <View style={shareStyles.format}><Text style={shareStyles.formatText}>海报{"\n"}打印</Text></View>
       </View>
-      <ActionLink href="/detail" label="保存海报" primary />
+      <ActionLink href={detailHref} label="保存海报" primary />
     </Screen>
   );
 }

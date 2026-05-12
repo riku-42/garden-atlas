@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { mockEntries, recommendationSettings } from "./mockData";
 import {
+  addCapturedEntry,
   createPrototypeState,
+  getPlantEntry,
   getRecommendationQueue,
   recordRecommendationInteraction,
   setEntryVisibility,
@@ -45,5 +47,35 @@ describe("prototypeState", () => {
 
     expect(updated.settings.recommendationSharingEnabled).toBe(true);
     expect(updated.entries.find((entry) => entry.id === "entry_rose")?.visibility).toBe("recommendable");
+  });
+
+  it("adds a captured generated entry as a private gallery item", () => {
+    const state = createPrototypeState();
+    const result = addCapturedEntry(state, {
+      id: "entry_new_capture",
+      capturedAt: "2026-05-13T09:00:00.000Z",
+      locationName: "Shanghai Riverside",
+      notes: "A white flower found during a walk.",
+      now: "2026-05-13T09:00:05.000Z",
+      sourceEntryId: "entry_camellia",
+      styleMode: "modern_editorial"
+    });
+    const entry = getPlantEntry(result.state, result.entryId);
+
+    expect(result.entryId).toBe("entry_new_capture");
+    expect(result.state.entries[0].id).toBe("entry_new_capture");
+    expect(entry).toMatchObject({
+      commonName: "山茶",
+      locationName: "Shanghai Riverside",
+      notes: "A white flower found during a walk.",
+      styleMode: "modern_editorial",
+      visibility: "private",
+      favorite: false
+    });
+    expect(entry?.generationHistory[0]).toMatchObject({
+      entryId: "entry_new_capture",
+      status: "succeeded",
+      styleMode: "modern_editorial"
+    });
   });
 });

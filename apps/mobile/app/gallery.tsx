@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
-import { mockEntries } from "@garden-atlas/shared";
 import { GalleryTile, TopBar } from "../src/components/GardenUI";
 import { Screen } from "../src/components/Screen";
+import { usePrototypeStore } from "../src/domain/PrototypeStore";
 import { colors, styles } from "../src/styles";
 
 export default function Gallery() {
+  const { entries } = usePrototypeStore();
+
   return (
     <Screen>
       <TopBar title="图鉴全览" />
@@ -15,8 +17,12 @@ export default function Gallery() {
         <Text style={styles.pill}>收藏</Text>
       </View>
       <View style={galleryStyles.grid}>
-        {mockEntries.map((entry) => (
-          <GalleryTile entry={entry} key={entry.id} />
+        {entries.map((entry) => (
+          <GalleryTile
+            entry={entry}
+            href={{ pathname: "/detail", params: { id: entry.id } }}
+            key={entry.id}
+          />
         ))}
       </View>
     </Screen>

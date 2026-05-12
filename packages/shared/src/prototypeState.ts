@@ -1,8 +1,10 @@
 import { mockEntries, recommendationSettings } from "./mockData";
 import type {
   EntryVisibility,
+  GenerationRecord,
   PlantEntry,
   RecommendationInteraction,
+  StyleMode,
   UserRecommendationSettings
 } from "./types";
 
@@ -18,11 +20,78 @@ type CreatePrototypeStateInput = {
   interactions?: RecommendationInteraction[];
 };
 
+export type AddCapturedEntryInput = {
+  capturedAt?: string;
+  id?: string;
+  locationName?: string;
+  notes?: string;
+  now?: string;
+  sourceEntryId?: string;
+  styleMode?: StyleMode;
+};
+
+export type AddCapturedEntryResult = {
+  entryId: string;
+  state: PrototypeState;
+};
+
 export function createPrototypeState(input: CreatePrototypeStateInput = {}): PrototypeState {
   return {
     entries: cloneEntries(input.entries ?? mockEntries),
     settings: { ...(input.settings ?? recommendationSettings) },
     interactions: [...(input.interactions ?? [])]
+  };
+}
+
+export function getPlantEntry(state: PrototypeState, entryId: string): PlantEntry | undefined {
+  return state.entries.find((entry) => entry.id === entryId);
+}
+
+export function addCapturedEntry(
+  state: PrototypeState,
+  input: AddCapturedEntryInput = {}
+): AddCapturedEntryResult {
+  const source = input.sourceEntryId ? getPlantEntry(state, input.sourceEntryId) : state.entries[0];
+  const template = source ?? mockEntries[0];
+  const now = input.now ?? new Date().toISOString();
+  const entryId = input.id ?? `entry_capture_${state.entries.length + 1}`;
+  const styleMode = input.styleMode ?? template.styleMode;
+  const generation: GenerationRecord = {
+    id: `gen_${entryId}`,
+    entryId,
+    status: "succeeded",
+    styleMode,
+    prompt: `Mock botanical atlas generation for ${template.commonName}`,
+    revisedPrompt: null,
+    outputImageUrl: template.generatedImageUrl,
+    errorCode: null,
+    createdAt: now,
+    completedAt: now
+  };
+  const entry: PlantEntry = {
+    ...template,
+    id: entryId,
+    capturedAt: input.capturedAt ?? now,
+    createdAt: now,
+    updatedAt: now,
+    favorite: false,
+    generationHistory: [generation],
+    locationName: input.locationName ?? template.locationName,
+    notes: input.notes ?? template.notes,
+    ownerDisplayName: null,
+    publicLocationLabel: null,
+    styleMode,
+    tags: [...template.tags],
+    visibility: state.settings.defaultEntryVisibility,
+    weatherSummary: null
+  };
+
+  return {
+    entryId,
+    state: {
+      ...state,
+      entries: [entry, ...state.entries]
+    }
   };
 }
 

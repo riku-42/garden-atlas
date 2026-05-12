@@ -1,12 +1,17 @@
 import { Text, View } from "react-native";
-import { mockEntries } from "@garden-atlas/shared";
+import { useLocalSearchParams } from "expo-router";
 import { ActionLink, PaperCard, TopBar } from "../src/components/GardenUI";
 import { PlantVisual } from "../src/components/PlantVisual";
 import { Screen } from "../src/components/Screen";
+import { usePrototypeStore } from "../src/domain/PrototypeStore";
 import { styles } from "../src/styles";
 
 export default function Detail() {
-  const entry = mockEntries[0];
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { entries, getEntry } = usePrototypeStore();
+  const entry = getEntry(id) ?? entries[0];
+  const locationHref = { pathname: "/location", params: { id: entry.id } } as const;
+  const shareHref = { pathname: "/share", params: { id: entry.id } } as const;
 
   return (
     <Screen>
@@ -34,8 +39,8 @@ export default function Detail() {
         </View>
       </PaperCard>
       <PlantVisual variant={entry.id} height={170} />
-      <ActionLink href="/location" label="编辑位置" />
-      <ActionLink href="/share" label="分享图鉴" primary />
+      <ActionLink href={locationHref} label="编辑位置" />
+      <ActionLink href={shareHref} label="分享图鉴" primary />
     </Screen>
   );
 }
