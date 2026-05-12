@@ -37,7 +37,7 @@ Secondary users:
 Must-have flows:
 
 - Onboarding: three concise pages introducing discover, transform, and collect.
-- Home: calm entry point with capture, gallery, favorites, and settings access.
+- Home: calm entry point with capture, a swipeable featured cover plant carousel, gallery, favorites, and settings access.
 - Capture: camera-like interface with guidance overlay and photo/source controls.
 - Generation: progress state that explains the AI transformation without exposing implementation detail.
 - Result: generated botanical atlas card with original comparison and save action.
@@ -126,6 +126,9 @@ Primary content:
 
 - Product title `花园图鉴`
 - Short line: `探索植物之美，记录自然的每一刻。`
+- Swipeable cover plant carousel (`封面植物`) showing recent or featured specimens.
+- Carousel cards include plant image, common name, scientific name, location/date, and quick favorite state.
+- Swipe behavior uses horizontal paging on touch devices and visible pagination dots; tapping a cover plant opens its detail page.
 - Primary capture card: `拍照识别植物`
 - Secondary actions: `图鉴全览`, `我的收藏`
 - Bottom navigation with Home, Capture, Settings.
@@ -213,6 +216,8 @@ Home:
 - `探索植物之美，记录自然的每一刻。`
 - `拍照识别植物`
 - `拍下植物，生成专属图鉴`
+- `封面植物`
+- `轻扫查看今日图鉴`
 - `图鉴全览`
 - `查看所有图鉴`
 - `我的收藏`

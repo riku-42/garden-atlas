@@ -85,6 +85,58 @@
           radial-gradient(circle at 70% 60%, #29482e 0 24%, transparent 25%),
           linear-gradient(140deg, #132514, #3e5d31);
       }
+      .cover-strip {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 82%;
+        gap: 12px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+      }
+      .cover-strip::-webkit-scrollbar { display: none; }
+      .cover-plant {
+        scroll-snap-align: start;
+        min-height: 250px;
+        border-radius: 22px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        color: #fffaf0;
+        background:
+          linear-gradient(180deg, rgba(15, 30, 15, .05), rgba(15, 30, 15, .72)),
+          radial-gradient(circle at 50% 35%, #fff 0 10%, #e9e0bb 11% 15%, #709153 16% 27%, transparent 28%),
+          linear-gradient(140deg, #132514, #3e5d31);
+      }
+      .cover-plant:nth-child(2) {
+        background:
+          linear-gradient(180deg, rgba(15, 30, 15, .04), rgba(15, 30, 15, .62)),
+          radial-gradient(circle at 52% 42%, #eeb9cd 0 15%, #b07393 16% 26%, transparent 27%),
+          linear-gradient(140deg, #243c25, #6d8c55);
+      }
+      .cover-plant:nth-child(3) {
+        background:
+          linear-gradient(180deg, rgba(15, 30, 15, .04), rgba(15, 30, 15, .64)),
+          radial-gradient(circle at 50% 40%, #f0d46b 0 13%, #d99f43 14% 22%, transparent 23%),
+          linear-gradient(140deg, #284425, #7d934f);
+      }
+      .dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #cfc6b5;
+      }
+      .dot:first-child {
+        width: 18px;
+        background: var(--moss);
+      }
       .card {
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -144,9 +196,23 @@
         <div class="phone">
           <div class="phone-screen">
             <div style="display:flex;justify-content:space-between;font-size:12px"><span>9:41</span><span>Garden Atlas</span></div>
-            <h2>山茶</h2>
-            <p style="margin-top:-8px">Camellia japonica · 杭州西湖</p>
-            <div class="flower"></div>
+            <h2>封面植物</h2>
+            <p style="margin-top:-8px">轻扫查看今日图鉴</p>
+            <div class="cover-strip" aria-label="Swipeable cover plants">
+              <div class="cover-plant">
+                <strong>山茶</strong>
+                <span>Camellia japonica · 杭州西湖</span>
+              </div>
+              <div class="cover-plant">
+                <strong>绣球花</strong>
+                <span>Hydrangea macrophylla · 庭院</span>
+              </div>
+              <div class="cover-plant">
+                <strong>月季</strong>
+                <span>Rosa chinensis · 河岸步道</span>
+              </div>
+            </div>
+            <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
             <div class="card">
               <strong>AI specimen card</strong>
               <p>Cleaned illustration, detail panels, line drawings, notes, and place memory.</p>
@@ -191,7 +257,7 @@
       <section>
         <h2>Core Screens</h2>
         <div class="grid">
-          <div class="card"><h3>Home</h3><p>Premium calm entry point with title, capture card, gallery, favorites, and bottom nav.</p></div>
+          <div class="card"><h3>Home</h3><p>Premium calm entry point with title, swipeable 封面植物 carousel, capture card, gallery, favorites, and bottom nav.</p></div>
           <div class="card"><h3>Capture</h3><p>Full-screen camera mock with overlay, capture button, album, flash, and history controls.</p></div>
           <div class="card"><h3>Generation</h3><p>Specimen preparation progress: contour, composition, detail panels, labels.</p></div>
           <div class="card"><h3>Result</h3><p>Generated atlas plate, metadata, comparison slider, save/share/favorite actions.</p></div>
