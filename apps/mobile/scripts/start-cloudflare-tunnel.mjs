@@ -15,6 +15,7 @@ const cliArgs = process.argv.slice(2);
 const smokeTest = cliArgs.includes("--smoke-test");
 const expoArgsFromUser = cliArgs.filter((arg) => arg !== "--smoke-test" && arg !== "--non-interactive");
 const requestedPort = Number(process.env.RCT_METRO_PORT || process.env.EXPO_PORT || 8081);
+const qrPlatform = resolveQrPlatform(process.env.EXPO_GO_PLATFORM || "ios");
 const children = new Set();
 
 let shuttingDown = false;
@@ -23,6 +24,15 @@ let port = requestedPort;
 
 function log(message) {
   process.stdout.write(`${message}\n`);
+}
+
+function resolveQrPlatform(platform) {
+  const normalized = String(platform).toLowerCase();
+  if (normalized === "android" || normalized === "ios") {
+    return normalized;
+  }
+
+  throw new Error(`EXPO_GO_PLATFORM must be "ios" or "android". Received: ${platform}`);
 }
 
 function spawnChild(command, args, options = {}) {
@@ -119,6 +129,40 @@ async function waitForStatus(url, label, timeoutMs = 60000) {
   throw new Error(`${label} did not become reachable: ${lastError?.message ?? "unknown error"}`);
 }
 
+async function waitForManifest(url, platform, timeoutMs = 60000) {
+  const deadline = Date.now() + timeoutMs;
+  let lastError = null;
+
+  while (Date.now() < deadline) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const response = await fetch(`${url}/?platform=${platform}`, {
+        headers: {
+          accept: "application/expo+json,application/json",
+          "expo-platform": platform,
+          "expo-protocol-version": "1",
+        },
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      const body = await response.text();
+      const contentType = response.headers.get("content-type") ?? "";
+      JSON.parse(body);
+      if (response.ok && contentType.includes("application/expo+json")) {
+        log(`[garden-atlas] Expo ${platform} manifest is valid JSON.`);
+        return;
+      }
+      lastError = new Error(`${response.status} ${contentType} ${body.slice(0, 80)}`);
+    } catch (error) {
+      lastError = error;
+    }
+    await delay(1000);
+  }
+
+  throw new Error(`Expo ${platform} manifest did not become valid JSON: ${lastError?.message ?? "unknown error"}`);
+}
+
 function startExpo(tunnelUrl) {
   if (expoStarted) return;
   expoStarted = true;
@@ -134,11 +178,12 @@ function startExpo(tunnelUrl) {
   ];
 
   log(`[garden-atlas] Cloudflare tunnel ready: ${tunnelUrl}`);
-  const expoGoUrl = `exp://${new URL(tunnelUrl).host}`;
+  const expoGoUrl = `exp://${new URL(tunnelUrl).host}/?platform=${qrPlatform}`;
   log(`[garden-atlas] Expo Go URL: ${expoGoUrl}`);
   if (!smokeTest) {
     log("[garden-atlas] Scan this QR code with Expo Go:");
     qrcode.generate(expoGoUrl, { small: true }, (qr) => log(qr));
+    log("[garden-atlas] Android phone: run again with $env:EXPO_GO_PLATFORM='android' before the npm command.");
   }
   log("[garden-atlas] Starting Expo with EXPO_PACKAGER_PROXY_URL so the QR code uses the public tunnel.");
 
@@ -217,6 +262,7 @@ async function main() {
   if (smokeTest) {
     await waitForStatus(`http://127.0.0.1:${port}/status`, "Local Expo server");
     await waitForStatus(`${tunnelUrl}/status`, "Cloudflare tunnel");
+    await waitForManifest(tunnelUrl, qrPlatform);
     stopChildren();
   }
 }

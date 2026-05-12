@@ -95,8 +95,15 @@ npm --workspace @garden-atlas/mobile run start:phone -- --clear</code></pre>
 
       <p>
         命令启动后，终端会先显示 <code>Expo Go URL</code>，并由 Garden Atlas 启动脚本直接打印一个 QR code。
+        默认 QR 会包含 <code>?platform=ios</code>，确保 iPhone 收到 Expo manifest JSON，而不是 web HTML。
         用手机上的 Expo Go 扫码即可；手机不需要和工作电脑在同一个局域网。
       </p>
+
+      <p>
+        Android 手机预览时，先设置平台变量再启动：
+      </p>
+      <pre><code>$env:EXPO_GO_PLATFORM="android"
+npm --workspace @garden-atlas/mobile run start:phone -- --clear</code></pre>
 
       <h2>保留的本地模式</h2>
       <pre><code>npm --workspace @garden-atlas/mobile run start -- --lan --clear
@@ -110,7 +117,7 @@ npm --workspace @garden-atlas/mobile run start -- --localhost --clear</code></pr
       <h2>验证</h2>
       <p class="note">
         新脚本有 smoke test：它会启动 Cloudflare tunnel 和 Expo，确认本地 <code>/status</code> 与公网 tunnel
-        <code>/status</code> 都可访问，然后自动退出。
+        <code>/status</code> 都可访问，并验证 Expo manifest 是可解析 JSON，然后自动退出。
       </p>
       <pre><code>npm --workspace @garden-atlas/mobile run start:phone -- --smoke-test --clear</code></pre>
     </main>
