@@ -40,7 +40,7 @@ export function AtlasCard({ entry }: { entry: PlantEntry }) {
       <Text style={uiStyles.specimenTitle}>{entry.commonName}</Text>
       <Text style={styles.smallText}>{entry.speciesName} · {entry.publicLocationLabel ?? entry.locationName}</Text>
       <View style={uiStyles.atlasVisual}>
-        <PlantVisual variant={entry.id} height={210} />
+        <PlantVisual imageUri={entry.generatedImageUrl} variant={entry.id} height={210} />
       </View>
       <View style={styles.pillRow}>
         <Text style={styles.pill}>花期 12月-4月</Text>
@@ -60,7 +60,7 @@ export function GalleryTile({ entry, href = "/detail" }: { entry: PlantEntry; hr
   return (
     <Link href={href} asChild>
       <Pressable style={uiStyles.galleryTile}>
-        <PlantVisual variant={entry.id} height={104} />
+        <PlantVisual imageUri={entry.generatedImageUrl} variant={entry.id} height={104} />
         <View style={uiStyles.galleryCopy}>
           <Text style={uiStyles.galleryTitle}>{entry.commonName}</Text>
           <Text style={styles.smallText} numberOfLines={1}>{entry.speciesName}</Text>

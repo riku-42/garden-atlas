@@ -57,6 +57,7 @@ describe("prototypeState", () => {
       locationName: "Shanghai Riverside",
       notes: "A white flower found during a walk.",
       now: "2026-05-13T09:00:05.000Z",
+      originalImageUrl: "file:///phone/photo-001.jpg",
       sourceEntryId: "entry_camellia",
       styleMode: "modern_editorial"
     });
@@ -66,8 +67,10 @@ describe("prototypeState", () => {
     expect(result.state.entries[0].id).toBe("entry_new_capture");
     expect(entry).toMatchObject({
       commonName: "山茶",
+      generatedImageUrl: "file:///phone/photo-001.jpg",
       locationName: "Shanghai Riverside",
       notes: "A white flower found during a walk.",
+      originalImageUrl: "file:///phone/photo-001.jpg",
       styleMode: "modern_editorial",
       visibility: "private",
       favorite: false

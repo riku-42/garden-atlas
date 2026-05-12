@@ -1,4 +1,5 @@
-import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import {
   addCapturedEntry,
   createPrototypeState,
@@ -31,9 +32,42 @@ type PrototypeContextValue = {
 };
 
 const PrototypeContext = createContext<PrototypeContextValue | null>(null);
+const STORAGE_KEY = "garden-atlas.prototype-state.v1";
 
 export function PrototypeProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PrototypeState>(() => createPrototypeState());
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then((stored) => {
+        const restored = restorePrototypeState(stored);
+        if (isMounted && restored) {
+          setState(restored);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setHasHydrated(true);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state)).catch(() => {
+      // Keep the app usable if local persistence is temporarily unavailable.
+    });
+  }, [hasHydrated, state]);
 
   const value = useMemo<PrototypeContextValue>(
     () => ({
@@ -69,6 +103,28 @@ export function PrototypeProvider({ children }: { children: ReactNode }) {
   );
 
   return <PrototypeContext.Provider value={value}>{children}</PrototypeContext.Provider>;
+}
+
+function restorePrototypeState(stored: string | null): PrototypeState | null {
+  if (!stored) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(stored) as Partial<PrototypeState>;
+
+    if (!Array.isArray(parsed.entries)) {
+      return null;
+    }
+
+    return createPrototypeState({
+      entries: parsed.entries,
+      interactions: Array.isArray(parsed.interactions) ? parsed.interactions : [],
+      settings: parsed.settings
+    });
+  } catch {
+    return null;
+  }
 }
 
 export function usePrototypeStore() {

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { uiCopy } from "@garden-atlas/shared";
 import { Screen } from "../src/components/Screen";
@@ -7,6 +7,7 @@ import { usePrototypeStore } from "../src/domain/PrototypeStore";
 import { colors, styles } from "../src/styles";
 
 export default function Generating() {
+  const { imageUri } = useLocalSearchParams<{ imageUri?: string }>();
   const { addGeneratedEntry } = usePrototypeStore();
   const hasStarted = useRef(false);
 
@@ -19,13 +20,14 @@ export default function Generating() {
     const timerId = setTimeout(() => {
       const entryId = addGeneratedEntry({
         locationName: "新采集地点",
-        notes: "刚刚生成的一张植物图鉴。",
+        notes: imageUri ? "由手机照片生成的一张植物图鉴。" : "刚刚生成的一张植物图鉴。",
+        originalImageUrl: imageUri,
         styleMode: "scientific_herbarium"
       });
       router.replace({ pathname: "/result", params: { id: entryId } });
     }, 1800);
     return () => clearTimeout(timerId);
-  }, [addGeneratedEntry]);
+  }, [addGeneratedEntry, imageUri]);
 
   return (
     <Screen dark>

@@ -19,7 +19,7 @@ export default function Detail() {
       <PaperCard>
         <View style={styles.row}>
           <View style={{ width: 78, height: 78, overflow: "hidden", borderRadius: 18 }}>
-            <PlantVisual variant={entry.id} height={78} />
+            <PlantVisual imageUri={entry.originalImageUrl} variant={entry.id} height={78} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.cardTitle}>{entry.commonName}</Text>
@@ -38,7 +38,7 @@ export default function Detail() {
           ))}
         </View>
       </PaperCard>
-      <PlantVisual variant={entry.id} height={170} />
+      <PlantVisual imageUri={entry.originalImageUrl} variant={entry.id} height={170} />
       <ActionLink href={locationHref} label="编辑位置" />
       <ActionLink href={shareHref} label="分享图鉴" primary />
     </Screen>

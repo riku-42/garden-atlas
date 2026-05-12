@@ -1,9 +1,76 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { useState } from "react";
+import { Directory, File, Paths } from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Screen } from "../src/components/Screen";
 import { colors } from "../src/styles";
 
 export default function Capture() {
+  const [message, setMessage] = useState("将植物放在取景框中，拍照或从相册选择。");
+  const [isPicking, setIsPicking] = useState(false);
+
+  async function openCamera() {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      setMessage("需要相机权限才能拍摄植物。");
+      return;
+    }
+
+    await pickImage(() =>
+      ImagePicker.launchCameraAsync({
+        allowsEditing: false,
+        mediaTypes: ["images"],
+        quality: 0.92
+      })
+    );
+  }
+
+  async function openLibrary() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      setMessage("需要照片权限才能选择植物照片。");
+      return;
+    }
+
+    await pickImage(() =>
+      ImagePicker.launchImageLibraryAsync({
+        allowsEditing: false,
+        mediaTypes: ["images"],
+        quality: 0.92
+      })
+    );
+  }
+
+  async function pickImage(
+    picker: () => Promise<ImagePicker.ImagePickerResult>
+  ) {
+    if (isPicking) {
+      return;
+    }
+
+    setIsPicking(true);
+    setMessage("正在打开照片来源...");
+
+    try {
+      const result = await picker();
+      const asset = result.canceled ? null : result.assets[0];
+
+      if (!asset) {
+        setMessage("已取消选择。");
+        return;
+      }
+
+      setMessage("正在保存植物照片...");
+      const imageUri = await persistPickedImage(asset.uri);
+      router.push({ pathname: "/generating", params: { imageUri } });
+    } catch {
+      setMessage("无法读取照片，请重试。");
+    } finally {
+      setIsPicking(false);
+    }
+  }
+
   return (
     <Screen dark padded={false}>
       <View style={captureStyles.root}>
@@ -18,15 +85,19 @@ export default function Capture() {
           </View>
         </View>
         <View style={captureStyles.focusBox} />
+        <Text style={captureStyles.guideText}>{message}</Text>
         <View style={captureStyles.footer}>
           <View style={captureStyles.controls}>
-            <View style={captureStyles.sideControl}>
+            <Pressable style={captureStyles.sideControl} onPress={openLibrary} disabled={isPicking}>
               <Text style={captureStyles.controlIcon}>□</Text>
               <Text style={captureStyles.controlText}>相册</Text>
-            </View>
-            <Link href="/generating" asChild>
-              <Pressable style={captureStyles.shutter} />
-            </Link>
+            </Pressable>
+            <Pressable
+              accessibilityLabel="拍摄植物照片"
+              disabled={isPicking}
+              onPress={openCamera}
+              style={[captureStyles.shutter, isPicking && captureStyles.shutterDisabled]}
+            />
             <View style={captureStyles.sideControl}>
               <Text style={captureStyles.controlIcon}>◎</Text>
               <Text style={captureStyles.controlText}>识别历史</Text>
@@ -40,6 +111,17 @@ export default function Capture() {
       </View>
     </Screen>
   );
+}
+
+async function persistPickedImage(uri: string) {
+  const directory = new Directory(Paths.document, "garden-atlas");
+  directory.create({ intermediates: true, idempotent: true });
+
+  const extension = uri.match(/\.(jpe?g|png|heic|webp)(?:\?|$)/i)?.[1] ?? "jpg";
+  const destination = new File(directory, `plant-${Date.now()}.${extension.toLowerCase()}`);
+  new File(uri).copy(destination);
+
+  return destination.uri;
 }
 
 const captureStyles = StyleSheet.create({
@@ -77,6 +159,16 @@ const captureStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.25)"
   },
+  guideText: {
+    position: "absolute",
+    left: 28,
+    right: 28,
+    bottom: 210,
+    color: "rgba(255,255,255,0.78)",
+    fontSize: 13,
+    lineHeight: 19,
+    textAlign: "center"
+  },
   footer: {
     position: "absolute",
     left: 0,
@@ -109,6 +201,9 @@ const captureStyles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 5,
     borderColor: colors.ivory
+  },
+  shutterDisabled: {
+    opacity: 0.55
   },
   tabs: {
     flexDirection: "row",

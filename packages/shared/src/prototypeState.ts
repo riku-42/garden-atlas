@@ -22,10 +22,12 @@ type CreatePrototypeStateInput = {
 
 export type AddCapturedEntryInput = {
   capturedAt?: string;
+  generatedImageUrl?: string;
   id?: string;
   locationName?: string;
   notes?: string;
   now?: string;
+  originalImageUrl?: string;
   sourceEntryId?: string;
   styleMode?: StyleMode;
 };
@@ -56,6 +58,8 @@ export function addCapturedEntry(
   const now = input.now ?? new Date().toISOString();
   const entryId = input.id ?? `entry_capture_${state.entries.length + 1}`;
   const styleMode = input.styleMode ?? template.styleMode;
+  const originalImageUrl = input.originalImageUrl ?? template.originalImageUrl;
+  const generatedImageUrl = input.generatedImageUrl ?? input.originalImageUrl ?? template.generatedImageUrl;
   const generation: GenerationRecord = {
     id: `gen_${entryId}`,
     entryId,
@@ -63,7 +67,7 @@ export function addCapturedEntry(
     styleMode,
     prompt: `Mock botanical atlas generation for ${template.commonName}`,
     revisedPrompt: null,
-    outputImageUrl: template.generatedImageUrl,
+    outputImageUrl: generatedImageUrl,
     errorCode: null,
     createdAt: now,
     completedAt: now
@@ -75,9 +79,11 @@ export function addCapturedEntry(
     createdAt: now,
     updatedAt: now,
     favorite: false,
+    generatedImageUrl,
     generationHistory: [generation],
     locationName: input.locationName ?? template.locationName,
     notes: input.notes ?? template.notes,
+    originalImageUrl,
     ownerDisplayName: null,
     publicLocationLabel: null,
     styleMode,

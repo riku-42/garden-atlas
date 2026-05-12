@@ -1,7 +1,8 @@
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { colors } from "../styles";
 
 type PlantVisualProps = {
+  imageUri?: string | null;
   variant?: string;
   height?: number;
 };
@@ -15,7 +16,17 @@ const palettes: Record<string, { petal: string; center: string; leaf: string; ba
   entry_lotus: { petal: "#f1b3ca", center: "#e0c067", leaf: "#577b55", base: "#1a3325" }
 };
 
-export function PlantVisual({ variant = "entry_camellia", height = 260 }: PlantVisualProps) {
+export function PlantVisual({ imageUri, variant = "entry_camellia", height = 260 }: PlantVisualProps) {
+  if (isDisplayableUri(imageUri)) {
+    return (
+      <Image
+        resizeMode="cover"
+        source={{ uri: imageUri }}
+        style={[visualStyles.visual, { height }]}
+      />
+    );
+  }
+
   const palette = palettes[variant] ?? palettes.entry_camellia;
 
   return (
@@ -28,6 +39,10 @@ export function PlantVisual({ variant = "entry_camellia", height = 260 }: PlantV
       <View style={visualStyles.shadow} />
     </View>
   );
+}
+
+function isDisplayableUri(uri?: string | null): uri is string {
+  return Boolean(uri && /^(asset|content|file|https?):\/\//.test(uri));
 }
 
 const visualStyles = StyleSheet.create({
