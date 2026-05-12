@@ -1,0 +1,17 @@
+:root {
+  --color-ink: #20351f;
+  --color-muted: #66725e;
+  --color-paper: #fbf7ed;
+  --color-ivory: #fffdf6;
+  --color-moss: #557a3d;
+  --color-forest: #172916;
+  --color-line: #e2dac7;
+  --color-gold: #b5964f;
+  --color-rose: #bd7d8e;
+  --color-sky: #9dbbd2;
+  --shadow-soft: 0 24px 70px rgba(49, 61, 42, 0.16);
+  --shadow-card: 0 16px 36px rgba(54, 63, 46, 0.12);
+  --radius-card: 8px;
+  --radius-soft: 18px;
+  --radius-phone: 34px;
+}

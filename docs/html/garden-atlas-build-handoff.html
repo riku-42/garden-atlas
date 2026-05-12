@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Garden Atlas Build Handoff</title>
+    <style>
+      :root {
+        --ink: #20351f;
+        --muted: #66725e;
+        --paper: #fbf7ed;
+        --ivory: #fffdf6;
+        --moss: #557a3d;
+        --line: #e2dac7;
+        --gold: #b5964f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #ece5d8;
+        color: var(--ink);
+        font-family: "Aptos", "Segoe UI", sans-serif;
+        line-height: 1.58;
+      }
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 46px 22px 72px;
+      }
+      h1, h2, h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+        margin: 0;
+      }
+      h1 { font-size: clamp(42px, 8vw, 88px); line-height: .92; }
+      h2 { font-size: 30px; margin-bottom: 14px; }
+      h3 { font-size: 21px; margin-bottom: 8px; }
+      p { color: var(--muted); margin: 10px 0 0; }
+      .hero, section {
+        background: var(--ivory);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 20px 58px rgba(49, 61, 42, .12);
+      }
+      .hero { padding: 34px; }
+      section { margin-top: 20px; padding: 28px; }
+      .eyebrow {
+        color: var(--gold);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .14em;
+        font-weight: 800;
+        margin-bottom: 14px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 18px;
+      }
+      code {
+        background: #f2ead7;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 2px 6px;
+      }
+      ul { margin: 10px 0 0; padding-left: 20px; color: var(--muted); }
+      a { color: var(--moss); font-weight: 800; }
+      @media (max-width: 780px) {
+        main { padding: 22px 12px 48px; }
+        .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="hero">
+        <div class="eyebrow">Build handoff</div>
+        <h1>Garden Atlas<br />Prototype MVP</h1>
+        <p>The prototype-first build now includes a Vite mobile web prototype, shared product domain package, and React Native Expo scaffold.</p>
+      </div>
+
+      <section>
+        <h2>Run Targets</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Web Prototype</h3>
+            <p><a href="http://localhost:5175">http://localhost:5175</a></p>
+            <p>Command: <code>npm run dev:web</code></p>
+          </div>
+          <div class="card">
+            <h3>Expo Scaffold</h3>
+            <p>Command: <code>npm run dev:mobile</code></p>
+            <p>Routes mirror the web product structure.</p>
+          </div>
+          <div class="card">
+            <h3>Shared Package</h3>
+            <p><code>packages/shared</code> owns data model, copy, mock entries, and API contract shapes.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Implemented Screens</h2>
+        <ul>
+          <li>Home with one-card-at-a-time infinite <code>封面植物</code> recommendation deck.</li>
+          <li>Capture, Generating, Result, Gallery, Entry Detail, Location, Recommendation Settings, Share/Export.</li>
+          <li>Recommendation privacy is off by default in shared settings; only <code>recommendable</code> entries feed the deck.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Verification Commands</h2>
+        <ul>
+          <li><code>npm run typecheck</code></li>
+          <li><code>npm run test:web</code></li>
+          <li><code>npm run build:web</code></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Deferred Production Work</h2>
+        <ul>
+          <li>Real OpenAI image generation backend adapter.</li>
+          <li>Auth, cloud sync, subscriptions, and production storage.</li>
+          <li>Production map SDK keys and native camera/location permission UX.</li>
+          <li>Moderation and ranking for public recommendation feed.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

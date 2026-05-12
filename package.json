@@ -1,0 +1,17 @@
+{
+  "name": "garden-atlas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Prototype-first MVP for Garden Atlas / Hua Yuan Tu Jian.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm --workspace @garden-atlas/web run dev",
+    "build:web": "npm --workspace @garden-atlas/web run build",
+    "test:web": "npm --workspace @garden-atlas/web run test",
+    "typecheck": "npm --workspaces --if-present run typecheck",
+    "dev:mobile": "npm --workspace @garden-atlas/mobile run start"
+  }
+}

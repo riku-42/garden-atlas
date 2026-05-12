@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Garden Atlas",
+    "slug": "garden-atlas",
+    "scheme": "garden-atlas",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "plugins": ["expo-router", "expo-camera", "expo-image-picker", "expo-location"]
+  }
+}
