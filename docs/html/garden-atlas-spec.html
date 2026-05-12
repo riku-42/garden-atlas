@@ -85,57 +85,64 @@
           radial-gradient(circle at 70% 60%, #29482e 0 24%, transparent 25%),
           linear-gradient(140deg, #132514, #3e5d31);
       }
-      .cover-strip {
-        display: grid;
-        grid-auto-flow: column;
-        grid-auto-columns: 82%;
-        gap: 12px;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        padding-bottom: 4px;
-        scrollbar-width: none;
+      .deck {
+        position: relative;
+        height: 314px;
+        margin-top: 2px;
       }
-      .cover-strip::-webkit-scrollbar { display: none; }
-      .cover-plant {
-        scroll-snap-align: start;
-        min-height: 250px;
-        border-radius: 22px;
-        padding: 14px;
+      .deck-card {
+        height: 100%;
+        border-radius: 24px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         color: #fffaf0;
+        box-shadow: 0 18px 44px rgba(32, 53, 31, .24);
         background:
-          linear-gradient(180deg, rgba(15, 30, 15, .05), rgba(15, 30, 15, .72)),
+          linear-gradient(180deg, rgba(15, 30, 15, .03), rgba(15, 30, 15, .76)),
           radial-gradient(circle at 50% 35%, #fff 0 10%, #e9e0bb 11% 15%, #709153 16% 27%, transparent 28%),
           linear-gradient(140deg, #132514, #3e5d31);
       }
-      .cover-plant:nth-child(2) {
-        background:
-          linear-gradient(180deg, rgba(15, 30, 15, .04), rgba(15, 30, 15, .62)),
-          radial-gradient(circle at 52% 42%, #eeb9cd 0 15%, #b07393 16% 26%, transparent 27%),
-          linear-gradient(140deg, #243c25, #6d8c55);
+      .deck-card.active {
+        transform: none;
       }
-      .cover-plant:nth-child(3) {
-        background:
-          linear-gradient(180deg, rgba(15, 30, 15, .04), rgba(15, 30, 15, .64)),
-          radial-gradient(circle at 50% 40%, #f0d46b 0 13%, #d99f43 14% 22%, transparent 23%),
-          linear-gradient(140deg, #284425, #7d934f);
+      .swipe-label {
+        position: absolute;
+        top: 16px;
+        border: 2px solid currentColor;
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        background: rgba(255, 253, 246, .16);
       }
-      .dots {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
+      .swipe-label.pass { left: 14px; color: #f2c8ba; transform: rotate(-12deg); }
+      .swipe-label.like { right: 14px; color: #d8efbf; transform: rotate(12deg); }
+      .gesture-rail {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
       }
-      .dot {
-        width: 6px;
-        height: 6px;
+      .stream-note {
+        margin-top: -4px;
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      .gesture-button {
+        border: 1px solid var(--line);
         border-radius: 999px;
-        background: #cfc6b5;
+        background: #fffaf1;
+        color: var(--ink);
+        padding: 12px;
+        text-align: center;
+        font-weight: 700;
       }
-      .dot:first-child {
-        width: 18px;
+      .gesture-button.like {
         background: var(--moss);
+        border-color: var(--moss);
+        color: #fffaf1;
       }
       .card {
         border: 1px solid var(--line);
@@ -197,22 +204,21 @@
           <div class="phone-screen">
             <div style="display:flex;justify-content:space-between;font-size:12px"><span>9:41</span><span>Garden Atlas</span></div>
             <h2>封面植物</h2>
-            <p style="margin-top:-8px">轻扫查看今日图鉴</p>
-            <div class="cover-strip" aria-label="Swipeable cover plants">
-              <div class="cover-plant">
-                <strong>山茶</strong>
-                <span>Camellia japonica · 杭州西湖</span>
-              </div>
-              <div class="cover-plant">
-                <strong>绣球花</strong>
-                <span>Hydrangea macrophylla · 庭院</span>
-              </div>
-              <div class="cover-plant">
-                <strong>月季</strong>
-                <span>Rosa chinensis · 河岸步道</span>
+            <p style="margin-top:-8px">左滑略过，右滑喜欢</p>
+            <div class="deck" aria-label="TanTan-style cover plant recommendation deck">
+              <div class="deck-card active">
+                <span class="swipe-label pass">PASS</span>
+                <span class="swipe-label like">LIKE</span>
+                <strong style="font-size:22px">山茶</strong>
+                <span>Camellia japonica · 杭州</span>
+                <span style="opacity:.82;font-size:12px">来自 Luna's Herbarium · Scientific Herbarium</span>
               </div>
             </div>
-            <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="stream-note">每次滑动后自动载入下一张公开植物</div>
+            <div class="gesture-rail" aria-label="Recommendation actions">
+              <div class="gesture-button">不喜欢</div>
+              <div class="gesture-button like">喜欢</div>
+            </div>
             <div class="card">
               <strong>AI specimen card</strong>
               <p>Cleaned illustration, detail panels, line drawings, notes, and place memory.</p>
@@ -237,9 +243,9 @@
           <div class="card">
             <h3>In Scope</h3>
             <ul>
-              <li>Onboarding, home, capture, generation, result, gallery, detail, and location screens.</li>
+          <li>Onboarding, home, capture, generation, result, gallery, detail, recommendation, and location screens.</li>
               <li>Mock AI specimen generation with progress states.</li>
-              <li>Style modes, notes, favorites, tags, filters, sharing UI, and comparison slider.</li>
+          <li>Style modes, notes, favorites, tags, filters, opt-in recommendation sharing, and comparison slider.</li>
               <li>Expo scaffold with matching route names and shared model shapes.</li>
             </ul>
           </div>
@@ -247,7 +253,7 @@
             <h3>Deferred</h3>
             <ul>
               <li>Real OpenAI calls, auth, payments, cloud sync, production map SDK keys.</li>
-              <li>Real plant classifier, social feed, AR viewing, and plant care assistant.</li>
+          <li>Real plant classifier, chat/follow graph, social feed, AR viewing, and plant care assistant.</li>
               <li>Print-on-demand fulfillment and collaborative collections.</li>
             </ul>
           </div>
@@ -257,7 +263,7 @@
       <section>
         <h2>Core Screens</h2>
         <div class="grid">
-          <div class="card"><h3>Home</h3><p>Premium calm entry point with title, swipeable 封面植物 carousel, capture card, gallery, favorites, and bottom nav.</p></div>
+          <div class="card"><h3>Home</h3><p>Premium calm entry point with one dominant 封面植物 card on the first viewport. Swipe left to pass, right to like, then the next public plant loads into the same position.</p></div>
           <div class="card"><h3>Capture</h3><p>Full-screen camera mock with overlay, capture button, album, flash, and history controls.</p></div>
           <div class="card"><h3>Generation</h3><p>Specimen preparation progress: contour, composition, detail panels, labels.</p></div>
           <div class="card"><h3>Result</h3><p>Generated atlas plate, metadata, comparison slider, save/share/favorite actions.</p></div>
@@ -280,11 +286,14 @@
   latitude: number | null;
   longitude: number | null;
   locationName: string;
+  publicLocationLabel: string | null;
   weatherSummary: string | null;
   capturedAt: string;
   styleMode: StyleMode;
   tags: string[];
   favorite: boolean;
+  visibility: "private" | "recommendable";
+  ownerDisplayName: string | null;
   generationHistory: GenerationRecord[];
 };</code></pre>
       </section>
@@ -297,8 +306,25 @@
           <li><code>GET /api/generations/{generationId}</code> reads generation progress and output.</li>
           <li><code>PATCH /api/plant-entries/{entryId}</code> edits names, notes, tags, and favorite state.</li>
           <li><code>GET /api/plant-entries</code> powers the gallery with filters and search.</li>
+          <li><code>GET /api/recommendations/cover-plants</code> returns opt-in public plant cards for the deck.</li>
+          <li><code>POST /api/recommendations/{entryId}/interaction</code> records <code>like</code> or <code>pass</code>.</li>
+          <li><code>PATCH /api/me/recommendation-settings</code> updates the user's opt-in sharing preference.</li>
         </ul>
         <p>Production OpenAI calls stay server-side. The backend adapter can use the Responses API with the image generation tool for multi-step/iterative flows, or the Images API for single image generation and editing. References: <a href="https://platform.openai.com/docs/guides/image-generation">OpenAI image generation guide</a>, <a href="https://platform.openai.com/docs/guides/tools-image-generation">image generation tool guide</a>, and <a href="https://platform.openai.com/docs/api-reference/images/create">Images API reference</a>.</p>
+      </section>
+
+      <section>
+        <h2>Recommendation Privacy</h2>
+        <div class="two">
+          <div class="card">
+            <h3>Default Closed</h3>
+            <p>Entries stay private unless the user enables <strong>开放我的图鉴推荐给他人</strong> and marks cards as recommendable.</p>
+          </div>
+          <div class="card">
+            <h3>Public-Safe Data</h3>
+            <p>Recommendations show generated artwork, plant names, broad location, style mode, tags, and display name. Precise GPS and private notes stay hidden.</p>
+          </div>
+        </div>
       </section>
 
       <section>

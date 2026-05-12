@@ -37,7 +37,7 @@ Secondary users:
 Must-have flows:
 
 - Onboarding: three concise pages introducing discover, transform, and collect.
-- Home: calm entry point with capture, a swipeable featured cover plant carousel, gallery, favorites, and settings access.
+- Home: calm entry point with capture, a TanTan-style swipe deck for recommended cover plants (`封面植物`), gallery, favorites, and settings access.
 - Capture: camera-like interface with guidance overlay and photo/source controls.
 - Generation: progress state that explains the AI transformation without exposing implementation detail.
 - Result: generated botanical atlas card with original comparison and save action.
@@ -51,6 +51,7 @@ Should-have prototype states:
 - Favorites and identified/unidentified filters.
 - Share/export format selection.
 - Original vs generated comparison slider.
+- Opt-in control for making selected atlas cards eligible for plant recommendations.
 
 Deferred from first prototype:
 
@@ -60,7 +61,7 @@ Deferred from first prototype:
 - Payment/subscription implementation.
 - Cloud sync.
 - Production map SDK keys.
-- Social feed, AR, plant care assistant, and collaborative gardens.
+- Chat, follow graph, full social feed, AR, plant care assistant, and collaborative gardens.
 
 ## UX Principles
 
@@ -126,12 +127,30 @@ Primary content:
 
 - Product title `花园图鉴`
 - Short line: `探索植物之美，记录自然的每一刻。`
-- Swipeable cover plant carousel (`封面植物`) showing recent or featured specimens.
-- Carousel cards include plant image, common name, scientific name, location/date, and quick favorite state.
-- Swipe behavior uses horizontal paging on touch devices and visible pagination dots; tapping a cover plant opens its detail page.
+- Swipeable cover plant recommendation deck (`封面植物`) inspired by TanTan's card gesture pattern.
+- The first viewport shows exactly one dominant plant image/card so the screen stays calm and focused.
+- The recommendation stream is effectively infinite: after every like/pass, the next eligible public plant card loads into the same single-card position.
+- Cards show plants shared by users who explicitly opted into recommendations.
+- Swipe right means like/save inspiration; swipe left means pass/dismiss.
+- Action buttons mirror gestures for accessibility: `不喜欢` and `喜欢`.
+- Cards include plant image, common name, scientific name, location/date, owner display label, and style mode.
+- Tapping the card opens a public-safe detail view with no precise private location unless the owner allowed it.
+- The current user's own entries are private by default and only become recommendable after opt-in.
 - Primary capture card: `拍照识别植物`
 - Secondary actions: `图鉴全览`, `我的收藏`
 - Bottom navigation with Home, Capture, Settings.
+
+### Recommendation Sharing Option
+
+Purpose: let users decide whether their atlas can appear in other users' `封面植物` deck.
+
+Rules:
+
+- Default is private: no user entry is recommended to others unless explicitly enabled.
+- Users can enable recommendations globally, then choose whether each saved entry is private or recommendable.
+- Recommendable entries expose only public-safe data: generated card, common name, scientific name, broad location label, style mode, tags, and optional note excerpt.
+- Precise GPS, exact private notes, original photo metadata, and capture history remain private unless a later product decision adds granular controls.
+- Users can remove an entry from recommendations at any time.
 
 ### Capture
 
@@ -217,11 +236,22 @@ Home:
 - `拍照识别植物`
 - `拍下植物，生成专属图鉴`
 - `封面植物`
-- `轻扫查看今日图鉴`
+- `左滑略过，右滑喜欢`
+- `发现他人的植物图鉴`
+- `不喜欢`
+- `喜欢`
 - `图鉴全览`
 - `查看所有图鉴`
 - `我的收藏`
 - `收藏的植物`
+
+Recommendation sharing:
+
+- `开放我的图鉴推荐给他人`
+- `开启后，你选择公开的植物卡片可能出现在他人的封面植物中。`
+- `默认保持私密`
+- `设为可推荐`
+- `从推荐中移除`
 
 Generation:
 
@@ -291,6 +321,7 @@ type PlantEntry = {
   latitude: number | null;
   longitude: number | null;
   locationName: string;
+  publicLocationLabel: string | null;
   weatherSummary: string | null;
   capturedAt: string;
   createdAt: string;
@@ -298,6 +329,8 @@ type PlantEntry = {
   styleMode: StyleMode;
   tags: string[];
   favorite: boolean;
+  visibility: "private" | "recommendable";
+  ownerDisplayName: string | null;
   generationHistory: GenerationRecord[];
 };
 ```
@@ -326,6 +359,30 @@ type GenerationRecord = {
   errorCode: string | null;
   createdAt: string;
   completedAt: string | null;
+};
+```
+
+### UserRecommendationSettings
+
+```ts
+type UserRecommendationSettings = {
+  userId: string;
+  recommendationSharingEnabled: boolean;
+  defaultEntryVisibility: "private" | "recommendable";
+  publicDisplayName: string;
+  updatedAt: string;
+};
+```
+
+### RecommendationInteraction
+
+```ts
+type RecommendationInteraction = {
+  id: string;
+  viewerUserId: string;
+  entryId: string;
+  action: "like" | "pass";
+  createdAt: string;
 };
 ```
 
@@ -454,6 +511,83 @@ Response:
 }
 ```
 
+### Get Cover Plant Recommendations
+
+`GET /api/recommendations/cover-plants?limit=10`
+
+Response:
+
+```json
+{
+  "items": [
+    {
+      "entryId": "entry_public_01JZ8EXAMPLE",
+      "generatedImageUrl": "https://cdn.example.com/generated/camellia-card.jpg",
+      "commonName": "山茶",
+      "speciesName": "Camellia japonica",
+      "publicLocationLabel": "杭州",
+      "ownerDisplayName": "Luna's Herbarium",
+      "styleMode": "scientific_herbarium",
+      "tags": ["开花植物", "常绿灌木"]
+    }
+  ],
+  "nextCursor": null
+}
+```
+
+### Record Recommendation Interaction
+
+`POST /api/recommendations/{entryId}/interaction`
+
+Request:
+
+```json
+{
+  "action": "like"
+}
+```
+
+Response:
+
+```json
+{
+  "interaction": {
+    "id": "rec_like_01JZ8EXAMPLE",
+    "entryId": "entry_public_01JZ8EXAMPLE",
+    "action": "like",
+    "createdAt": "2026-05-12T07:30:00.000Z"
+  }
+}
+```
+
+### Update Recommendation Sharing Settings
+
+`PATCH /api/me/recommendation-settings`
+
+Request:
+
+```json
+{
+  "recommendationSharingEnabled": true,
+  "defaultEntryVisibility": "private",
+  "publicDisplayName": "Luna's Herbarium"
+}
+```
+
+Response:
+
+```json
+{
+  "settings": {
+    "userId": "user_01JZ8EXAMPLE",
+    "recommendationSharingEnabled": true,
+    "defaultEntryVisibility": "private",
+    "publicDisplayName": "Luna's Herbarium",
+    "updatedAt": "2026-05-12T07:30:00.000Z"
+  }
+}
+```
+
 ### OpenAI Image Integration Boundary
 
 The production backend should keep OpenAI calls server-side. The recommended production path is to use the Responses API with the `image_generation` tool when multi-step or iterative image generation is needed, and the Image API when a single image generation/edit request is enough. OpenAI's current image generation guide says both APIs support GPT Image models, output customization, and image generation/editing, while the Responses API is better for conversational or multi-step image workflows.
@@ -510,6 +644,8 @@ Prototype tests:
 - Verify mock generation progresses to result.
 - Verify gallery filters alter visible entries.
 - Verify detail edit state updates local data.
+- Verify cover plant deck supports swipe-left pass and swipe-right like gestures plus button equivalents.
+- Verify recommendation sharing is off by default and only recommendable entries appear in mock recommendations.
 - Verify comparison slider moves without layout shifts.
 - Verify responsive mobile viewport and desktop centered phone frame.
 
