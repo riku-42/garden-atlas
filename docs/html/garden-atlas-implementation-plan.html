@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Garden Atlas Implementation Plan</title>
+    <style>
+      :root {
+        --ink: #20351f;
+        --muted: #68745f;
+        --paper: #fbf7ed;
+        --ivory: #fffdf6;
+        --moss: #557a3d;
+        --forest: #172916;
+        --line: #e2dac7;
+        --gold: #b5964f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #ece5d8;
+        color: var(--ink);
+        font-family: "Aptos", "Segoe UI", sans-serif;
+        line-height: 1.58;
+      }
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 46px 22px 72px;
+      }
+      h1, h2, h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(42px, 8vw, 90px);
+        line-height: .92;
+      }
+      h2 { font-size: 30px; margin-bottom: 12px; }
+      h3 { font-size: 21px; margin-bottom: 8px; }
+      p { color: var(--muted); margin: 10px 0 0; }
+      .eyebrow {
+        color: var(--gold);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .14em;
+        font-weight: 800;
+        margin-bottom: 14px;
+      }
+      .hero, section {
+        background: var(--ivory);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 20px 58px rgba(49, 61, 42, .12);
+      }
+      .hero {
+        padding: 34px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(270px, .9fr);
+        gap: 28px;
+        align-items: end;
+      }
+      section {
+        margin-top: 20px;
+        padding: 28px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 18px;
+      }
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 22px;
+      }
+      .badge {
+        border: 1px solid var(--line);
+        background: var(--paper);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      ol {
+        margin: 10px 0 0;
+        padding-left: 22px;
+        color: var(--muted);
+      }
+      li { margin: 7px 0; }
+      code {
+        background: #f2ead7;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 2px 6px;
+      }
+      .timeline {
+        display: grid;
+        gap: 12px;
+      }
+      .step {
+        display: grid;
+        grid-template-columns: 42px 1fr;
+        gap: 14px;
+        align-items: start;
+      }
+      .num {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        background: var(--moss);
+        color: #fffaf0;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+      .phone {
+        min-height: 440px;
+        border-radius: 32px;
+        background: #111;
+        padding: 10px;
+      }
+      .screen {
+        min-height: 420px;
+        border-radius: 24px;
+        padding: 22px;
+        background: linear-gradient(180deg, #fffaf0, #efe6d6);
+      }
+      .deck {
+        height: 245px;
+        border-radius: 24px;
+        margin-top: 22px;
+        background:
+          linear-gradient(180deg, rgba(15, 30, 15, .03), rgba(15, 30, 15, .76)),
+          radial-gradient(circle at 50% 36%, #fff 0 10%, #e9e0bb 11% 15%, #709153 16% 27%, transparent 28%),
+          linear-gradient(140deg, #132514, #3e5d31);
+        color: #fffaf0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 16px;
+      }
+      @media (max-width: 780px) {
+        main { padding: 22px 12px 48px; }
+        .hero, .grid { grid-template-columns: 1fr; }
+        .hero, section { padding: 22px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Implementation Plan · Approved visual direction</div>
+          <h1>Garden Atlas<br />Build Plan</h1>
+          <p>Prototype-first MVP: build the Vite web prototype as the source of truth, then create a React Native Expo scaffold that mirrors the same product structure.</p>
+          <div class="badge-row">
+            <span class="badge">apps/web</span>
+            <span class="badge">apps/mobile</span>
+            <span class="badge">packages/shared</span>
+            <span class="badge">HTML handoff</span>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="screen">
+            <strong>封面植物</strong>
+            <p>One-card infinite recommendation deck</p>
+            <div class="deck">
+              <strong>山茶</strong>
+              <span>Camellia japonica · 杭州</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section>
+        <h2>Architecture</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Shared Core</h3>
+            <p><code>packages/shared</code> owns types, copy, mock data, recommendation privacy settings, and API contract shapes.</p>
+          </div>
+          <div class="card">
+            <h3>Web Prototype</h3>
+            <p><code>apps/web</code> implements the polished mobile-first demo: Home, Capture, Generating, Result, Gallery, Detail, Location, Settings, Share.</p>
+          </div>
+          <div class="card">
+            <h3>Expo Scaffold</h3>
+            <p><code>apps/mobile</code> mirrors the same routes and placeholders for camera, image picker, location, and generation.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Task Sequence</h2>
+        <div class="timeline">
+          <div class="step"><div class="num">1</div><div><h3>Workspace Bootstrap</h3><p>Create npm workspaces, TypeScript config, and shared package shell.</p></div></div>
+          <div class="step"><div class="num">2</div><div><h3>Domain Data</h3><p>Add UI copy, plant model, mock entries, recommendation privacy settings, and API contracts.</p></div></div>
+          <div class="step"><div class="num">3</div><div><h3>Web Shell</h3><p>Create Vite React app, CSS tokens, phone frame, smoke test, and build pipeline.</p></div></div>
+          <div class="step"><div class="num">4</div><div><h3>Web Screens</h3><p>Build all storyboard screens and the one-card infinite <code>封面植物</code> recommendation deck.</p></div></div>
+          <div class="step"><div class="num">5</div><div><h3>Expo Scaffold</h3><p>Create Expo Router app with matching routes and mocked service placeholders.</p></div></div>
+          <div class="step"><div class="num">6</div><div><h3>Verification</h3><p>Run typecheck, tests, web build, browser QA, and final HTML handoff page.</p></div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Verification</h2>
+        <ol>
+          <li><code>npm run typecheck</code> validates shared, web, and mobile TypeScript.</li>
+          <li><code>npm run test:web</code> validates web behavior, including recommendation deck advance.</li>
+          <li><code>npm run build:web</code> validates the Vite production build.</li>
+          <li>Browser QA confirms the first viewport shows one dominant plant card and all screens are reachable.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Execution Choice</h2>
+        <p>The detailed Markdown plan is saved at <code>docs/superpowers/plans/2026-05-12-garden-atlas-prototype-first-mvp.md</code>. Next step is implementation. Recommended execution is task-by-task in this session because the repo is small and the deliverables are tightly connected.</p>
+      </section>
+    </main>
+  </body>
+</html>
