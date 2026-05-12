@@ -10,13 +10,13 @@ Current approved direction: Prototype-first MVP.
 - `docs/html/garden-atlas-screen-storyboard.html` shows the rest of the app screens in HTML.
 - `docs/html/garden-atlas-implementation-plan.html` is the browser-readable implementation plan.
 - `docs/html/garden-atlas-build-handoff.html` summarizes the implemented prototype.
-- Planned implementation: Vite mobile web prototype plus React Native Expo scaffold.
+- Implemented prototype: Vite mobile web prototype plus React Native Expo mobile app.
 
 ## Workspace
 
 - `packages/shared`: product types, UI copy, mock data, and API contracts.
 - `apps/web`: mobile-first Vite prototype.
-- `apps/mobile`: React Native Expo scaffold.
+- `apps/mobile`: React Native Expo mobile prototype with matching Garden Atlas screens.
 
 ## Run Locally
 
