@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Garden Atlas Planning Spec</title>
+    <style>
+      :root {
+        --ink: #20351f;
+        --muted: #62715d;
+        --paper: #fbf7ed;
+        --ivory: #fffdf6;
+        --moss: #557a3d;
+        --line: #e4dccb;
+        --gold: #b5964f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #ede7db;
+        color: var(--ink);
+        font-family: "Aptos", "Segoe UI", sans-serif;
+        line-height: 1.55;
+      }
+      main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 48px 22px 72px;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+        gap: 28px;
+        align-items: stretch;
+      }
+      .panel, .phone, section {
+        background: var(--ivory);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 20px 60px rgba(62, 73, 52, .11);
+      }
+      .panel { padding: 34px; }
+      h1, h2, h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+        margin: 0;
+      }
+      h1 { font-size: clamp(42px, 7vw, 82px); line-height: .95; }
+      h2 { font-size: 30px; margin-bottom: 14px; }
+      h3 { font-size: 20px; margin-top: 18px; }
+      p { color: var(--muted); margin: 12px 0 0; }
+      .eyebrow {
+        color: var(--gold);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .12em;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+      .badge {
+        border: 1px solid var(--line);
+        background: var(--paper);
+        border-radius: 999px;
+        padding: 8px 12px;
+        color: var(--ink);
+        font-size: 13px;
+      }
+      .phone { padding: 14px; }
+      .phone-screen {
+        min-height: 560px;
+        border-radius: 24px;
+        padding: 22px;
+        background: linear-gradient(180deg, #fffaf0, #eee5d4);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .flower {
+        height: 220px;
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 50% 42%, #fff 0 11%, #e8e2c4 12% 17%, #6a8950 18% 30%, transparent 31%),
+          radial-gradient(circle at 30% 60%, #496d3c 0 20%, transparent 21%),
+          radial-gradient(circle at 70% 60%, #29482e 0 24%, transparent 25%),
+          linear-gradient(140deg, #132514, #3e5d31);
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+        padding: 16px;
+      }
+      section {
+        padding: 28px;
+        margin-top: 22px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      ul { margin: 10px 0 0; padding-left: 20px; color: var(--muted); }
+      code {
+        background: #f3ecd9;
+        border: 1px solid var(--line);
+        padding: 2px 6px;
+        border-radius: 6px;
+        color: #334528;
+      }
+      pre {
+        background: #23351f;
+        color: #f8f3e6;
+        padding: 16px;
+        border-radius: 8px;
+        overflow: auto;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      @media (max-width: 760px) {
+        main { padding: 20px 14px 48px; }
+        .hero, .grid, .two { grid-template-columns: 1fr; }
+        .panel, section { padding: 22px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="hero">
+        <div class="panel">
+          <div class="eyebrow">Approved direction · Prototype-first MVP</div>
+          <h1>花园图鉴<br />Garden Atlas</h1>
+          <p>Mobile-first AI botanical journaling app that transforms plant photos into collectible scientific-style specimen cards.</p>
+          <div class="badge-row">
+            <span class="badge">Vite web prototype</span>
+            <span class="badge">Expo scaffold</span>
+            <span class="badge">Mock AI generation</span>
+            <span class="badge">Formal API contracts</span>
+          </div>
+        </div>
+        <div class="phone">
+          <div class="phone-screen">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span>9:41</span><span>Garden Atlas</span></div>
+            <h2>山茶</h2>
+            <p style="margin-top:-8px">Camellia japonica · 杭州西湖</p>
+            <div class="flower"></div>
+            <div class="card">
+              <strong>AI specimen card</strong>
+              <p>Cleaned illustration, detail panels, line drawings, notes, and place memory.</p>
+            </div>
+            <div style="margin-top:auto;display:grid;grid-template-columns:1fr 58px 1fr;gap:10px;align-items:center">
+              <div class="card">图鉴</div>
+              <div style="height:58px;border-radius:50%;background:var(--moss)"></div>
+              <div class="card">收藏</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section>
+        <h2>Product Positioning</h2>
+        <p>Garden Atlas is an aesthetic AI botanical memory archive. It is not a diagnosis tool, agricultural system, or strict taxonomy product. The emotional goal is to turn everyday encounters with plants into collectible botanical artworks.</p>
+      </section>
+
+      <section>
+        <h2>MVP Scope</h2>
+        <div class="two">
+          <div class="card">
+            <h3>In Scope</h3>
+            <ul>
+              <li>Onboarding, home, capture, generation, result, gallery, detail, and location screens.</li>
+              <li>Mock AI specimen generation with progress states.</li>
+              <li>Style modes, notes, favorites, tags, filters, sharing UI, and comparison slider.</li>
+              <li>Expo scaffold with matching route names and shared model shapes.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Deferred</h3>
+            <ul>
+              <li>Real OpenAI calls, auth, payments, cloud sync, production map SDK keys.</li>
+              <li>Real plant classifier, social feed, AR viewing, and plant care assistant.</li>
+              <li>Print-on-demand fulfillment and collaborative collections.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Core Screens</h2>
+        <div class="grid">
+          <div class="card"><h3>Home</h3><p>Premium calm entry point with title, capture card, gallery, favorites, and bottom nav.</p></div>
+          <div class="card"><h3>Capture</h3><p>Full-screen camera mock with overlay, capture button, album, flash, and history controls.</p></div>
+          <div class="card"><h3>Generation</h3><p>Specimen preparation progress: contour, composition, detail panels, labels.</p></div>
+          <div class="card"><h3>Result</h3><p>Generated atlas plate, metadata, comparison slider, save/share/favorite actions.</p></div>
+          <div class="card"><h3>Gallery</h3><p>Filterable archive grid with identified, unidentified, favorites, dates, and locations.</p></div>
+          <div class="card"><h3>Location</h3><p>Map-style picker with search, pin, selected place, and coordinates.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Data Model</h2>
+        <pre><code>type PlantEntry = {
+  id: string;
+  originalImageUrl: string;
+  generatedImageUrl: string;
+  speciesName: string;
+  commonName: string;
+  identificationStatus: "identified" | "unidentified" | "edited";
+  confidence: number | null;
+  notes: string;
+  latitude: number | null;
+  longitude: number | null;
+  locationName: string;
+  weatherSummary: string | null;
+  capturedAt: string;
+  styleMode: StyleMode;
+  tags: string[];
+  favorite: boolean;
+  generationHistory: GenerationRecord[];
+};</code></pre>
+      </section>
+
+      <section>
+        <h2>API Contracts</h2>
+        <ul>
+          <li><code>POST /api/plant-entries</code> creates a memory entry around an uploaded photo.</li>
+          <li><code>POST /api/plant-entries/{entryId}/generations</code> starts specimen card generation.</li>
+          <li><code>GET /api/generations/{generationId}</code> reads generation progress and output.</li>
+          <li><code>PATCH /api/plant-entries/{entryId}</code> edits names, notes, tags, and favorite state.</li>
+          <li><code>GET /api/plant-entries</code> powers the gallery with filters and search.</li>
+        </ul>
+        <p>Production OpenAI calls stay server-side. The backend adapter can use the Responses API with the image generation tool for multi-step/iterative flows, or the Images API for single image generation and editing. References: <a href="https://platform.openai.com/docs/guides/image-generation">OpenAI image generation guide</a>, <a href="https://platform.openai.com/docs/guides/tools-image-generation">image generation tool guide</a>, and <a href="https://platform.openai.com/docs/api-reference/images/create">Images API reference</a>.</p>
+      </section>
+
+      <section>
+        <h2>Implementation Checkpoint</h2>
+        <p>This spec is ready for review. After approval, the next HTML planning artifact will be the implementation plan, then the Vite web prototype and Expo app scaffold will be created under this repository.</p>
+      </section>
+    </main>
+  </body>
+</html>
